@@ -922,61 +922,70 @@ async def on_message(message):
 
     # globalチャット関連
     # -------------------------------------------------------------------------------------------------------------------
-    channel = [c for c in message.server.channels if message.channel.name == "tao-global"]
+    channel = [channel for channel in message.server.channels if message.channel.name == "tao-global"]
     if channel:
-        if not message.author == client.user:
-            if not message.author.bot:
-                if message.attachments:
-                    embed = discord.Embed(
-                        title="発言者:" + message.author.name + "#" + message.author.discriminator,
-                        color=discord.Color.magenta(),
-                        timestamp=message.timestamp
-                    )
-                    embed.set_image(
-                        url=message.attachments[0]['url']
-                    )
-                    embed.set_thumbnail(
-                        url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
-                    )
-                    embed.set_author(
-                        name=message.server.name,
-                        icon_url=message.server.icon_url
-                    )
-                    embed.set_footer(
-                        text="発言時刻: "
-                    )
-                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                           c.name == 'tao-global'))
-                    await asyncio.sleep(10)
-                    await client.delete_message(message)
-                    return
-                
-                await client.delete_message(message)
+        if message.author == client.user:
+            return
+        if message.author.bot:
+            return
+        if db_get_message(int(message.author.id)) == True:
+            await client.delete_message(message)
+            return
+        else:
+            global counts
+            check = await client.wait_for_message(timeout=4,author=message.author)
+            if check:
+                counts += 1
+                print(counts)
+                if counts > 7:
+                    if db_get_author(int(message.author.id)) == True:
+                        embed = discord.Embed(
+                            description=f"{message.author.mention}さんはスパムをしたためこのチャンネルでは発言できません。",
+                            color=discord.Color(random.randint(0,0xFFFFFF))
+                        )
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in
+                                               client.get_all_channels() if
+                                               c.name == 'tao-global'))
+                        return
+            if check is None:
+                counts = 0
+                print("counts out")
+            if message.attachments:
                 embed = discord.Embed(
-                    title="発言者:" + message.author.name + "#" + message.author.discriminator,
-                    description=message.content,
-                    color=discord.Color.dark_grey(),
+                    title="発言者:" + str(message.author),
+                    color=discord.Color.magenta(),
                     timestamp=message.timestamp
+                )
+                embed.set_image(
+                    url=message.attachments[0]['url']
                 )
                 embed.set_thumbnail(
                     url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
-                )
-                embed.set_footer(
-                    text="発言時刻: "
                 )
                 embed.set_author(
                     name=message.server.name,
                     icon_url=message.server.icon_url
                 )
+                embed.set_footer(
+                    text="発言時刻: "
+                )
                 await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
                                        c.name == 'tao-global'))
+                await asyncio.sleep(10)
+                await client.delete_message(message)
+                return
 
-                if message.content == "グローバルリスト":
-                    async def send(server_data):
+            await client.delete_message(message)
+            if message.content.startswith("称号作成 "):
+                if message.author.id == "304932786286886912":
+                    ans = db_create(
+                        str(message.content.split()[1]),
+                        int(message.content.split()[2]) == discord.utils.get(client.get_all_members(),id=int(message.content.split()[2]))
+                    )
+                    if ans == True:
                         up = discord.Color(random.randint(0,0xFFFFFF))
                         embed = discord.Embed(
-                            title="tao-globalチャンネルに接続してるサバリスト:",
-                            description=server_data,
+                            description=f"<@{message.content.split()[2]}>さんに『{message.content.split()[1]}』称号を付与しました。",
                             color=up,
                             timestamp=message.timestamp
                         )
@@ -985,21 +994,108 @@ async def on_message(message):
                         )
                         await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
                                                c.name == 'tao-global'))
-
-                    i = 1
-                    server_data = ""
-                    for server in client.servers:
-                        if [client.get_all_channels() for channel in server.channels if channel.name == "tao-global"]:
-                            server_data += "{0}:『{1}』\n".format(i,server.name)
-                            if i % 100 == 0:
-                                await send(server_data)
-                                # リセットする
-                                server_data = ""
-                            i += 1
-                    else:
-                        await send(server_data)
                         return
+                    if ans == -1:
+                        up = discord.Color(random.randint(0,0xFFFFFF))
+                        embed = discord.Embed(
+                            description=f"<@{message.content.split()[2]}>さんは既に称号を持っています。",
+                            color=up,
+                            timestamp=message.timestamp
+                        )
+                        embed.set_footer(
+                            text="現在時刻:"
+                        )
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                               c.name == 'tao-global'))
+                        return
+                else:
+                    up = discord.Color(random.randint(0,0xFFFFFF))
+                    embed = discord.Embed(
+                        description="称号作成コマンドはこのBOTの管理者しか作成できないよ！",
+                        color=up,
+                        timestamp=message.timestamp
+                    )
+                    embed.set_footer(
+                        text="現在時刻:"
+                    )
+                    embed.set_author(
+                        name=message.server.name,
+                        icon_url=message.server.icon_url
+                    )
+                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                           c.name == 'tao-global'))
+                    return
 
+            if db_syougou(int(message.author.id)) == True:
+                embed = discord.Embed(
+                    title="発言者:" + str(message.author),
+                    description=message.content,
+                    color=discord.Color.dark_grey(),
+                    timestamp=message.timestamp
+                )
+                embed.set_thumbnail(
+                    url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+                )
+                embed.set_footer(
+                    text=f"{str(db_create(int(message.author.id))).name}\n 発言時刻 "
+                )
+                embed.set_author(
+                    name=message.server.name,
+                    icon_url=message.server.icon_url
+                )
+                await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                       c.name == 'tao-global'))
+                return
+            else:
+                embed = discord.Embed(
+                    title="発言者:" + str(message.author),
+                    description=message.content,
+                    color=discord.Color.dark_grey(),
+                    timestamp=message.timestamp
+                )
+                embed.set_thumbnail(
+                    url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+                )
+                embed.set_footer(
+                    text="称号:『特になし』\n 発言時刻 "
+                )
+                embed.set_author(
+                    name=message.server.name,
+                    icon_url=message.server.icon_url
+                )
+                await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                       c.name == 'tao-global'))
+                return
+
+
+            if message.content == "グローバルリスト":
+                async def send(server_data):
+                    up = discord.Color(random.randint(0,0xFFFFFF))
+                    embed = discord.Embed(
+                        title="tao-globalチャンネルに接続してるサバリスト:",
+                        description=server_data,
+                        color=up,
+                        timestamp=message.timestamp
+                    )
+                    embed.set_footer(
+                        text="現在時刻:"
+                    )
+                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                           c.name == 'tao-global'))
+
+                i = 1
+                server_data = ""
+                for server in client.servers:
+                    if [client.get_all_channels() for channel in server.channels if channel.name == "tao-global"]:
+                        server_data += "{0}:『{1}』\n".format(i,server.name)
+                        if i % 100 == 0:
+                            await send(server_data)
+                            # リセットする
+                            server_data = ""
+                        i += 1
+                else:
+                    await send(server_data)
+                    return
     # -------------------------------------------------------------------------------------------------------------------
     if message.content.startswith('&shutdown'):
         if not message.author.id == "304932786286886912":
@@ -1207,7 +1303,49 @@ def db_write(server_id,lower,upper,role_id):
             return -3  # "役職はもう既にあります"
         c.execute("INSERT INTO roles(server_id, lower, upper, role_id) VALUES(?,?,?,?)",(server_id,lower,upper,role_id))
         return True
+    
+def db_get_message(author_id):
+    author_id = int(author_id)
+    with closing(sqlite3.connect("ブラック企業.db",isolation_level=None)) as con:
+        c = con.cursor()
+        c.execute("CREATE TABLE IF NOT EXISTS get_author(author_id INTEGER)")
+        c.execute('SELECT * FROM get_author WHERE author_id=?',(author_id,))
+        if c.fetchall():
+            print("SELECT")
+            return True
 
+def db_get_author(author_id):
+    author_id = int(author_id)
+    with closing(sqlite3.connect("ブラック企業.db",isolation_level=None)) as con:
+        c = con.cursor()
+        c.execute("CREATE TABLE IF NOT EXISTS get_author(author_id INTEGER)")
+        c.execute("INSERT INTO get_author(author_id) VALUES(?)",(author_id,))
+        return True
+
+def db_create(syougoo_name,author_id):
+    syougoo_name = str(syougoo_name)
+    author_id = int(author_id)
+    with closing(sqlite3.connect("称号.db",isolation_level=None)) as con:
+        c = con.cursor()
+        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
+        c.execute('SELECT * FROM syougou WHERE author_id=?',(author_id,))
+        if c.fetchall():
+            return -1
+        c.execute('SELECT * FROM syougou WHERE syougoo_name AND author_id=?',(author_id,))
+        if c.fetchall():
+            return -2
+        c.execute("INSERT INTO syougou(syougoo_name, author_id) VALUES(?,?)",
+                  (syougoo_name,author_id))
+        return True
+
+def db_syougou(author_id):
+    author_id = int(author_id)
+    with closing(sqlite3.connect("称号.db",isolation_level=None)) as con:
+        c = con.cursor()
+        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
+        c.execute('SELECT * FROM syougou WHERE syougoo_name AND author_id=?',(author_id,))
+        if c.fetchall():
+            return True
 
 client.loop.create_task(change_status())
-client.run(os.environ.get("TOKEN")
+client.run(os.environ.get("TOKEN"))
