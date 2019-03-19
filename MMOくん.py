@@ -951,36 +951,61 @@ async def on_message(message):
                 counts = 0
                 print("counts out")
             if message.attachments:
-                embed = discord.Embed(
-                    title="発言者:" + str(message.author),
-                    color=discord.Color.magenta(),
-                    timestamp=message.timestamp
-                )
-                embed.set_image(
-                    url=message.attachments[0]['url']
-                )
-                embed.set_thumbnail(
-                    url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
-                )
-                embed.set_author(
-                    name=message.server.name,
-                    icon_url=message.server.icon_url
-                )
-                embed.set_footer(
-                    text="発言時刻: "
-                )
-                await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                for row in db_syougou(int(message.author.id)):
+                    embed = discord.Embed(
+                        title="発言者:" + str(message.author),
+                        color=discord.Color.magenta(),
+                        timestamp=message.timestamp
+                    )
+                    embed.set_image(
+                        url=message.attachments[0]['url']
+                    )
+                    embed.set_thumbnail(
+                        url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+                    )
+                    embed.set_author(
+                        name=message.server.name,
+                        icon_url=message.server.icon_url
+                    )
+                    embed.set_footer(
+                        text=f"称号:『{str(row[0])}』発言時刻: "
+                    )
+                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
                                        c.name == 'tao-global'))
-                await asyncio.sleep(10)
-                await client.delete_message(message)
-                return
+                    await asyncio.sleep(10)
+                    await client.delete_message(message)
+                    return
+                else:
+                    embed = discord.Embed(
+                        title="発言者:" + str(message.author),
+                        color=discord.Color.magenta(),
+                        timestamp=message.timestamp
+                    )
+                    embed.set_image(
+                        url=message.attachments[0]['url']
+                    )
+                    embed.set_thumbnail(
+                        url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+                    )
+                    embed.set_author(
+                        name=message.server.name,
+                        icon_url=message.server.icon_url
+                    )
+                    embed.set_footer(
+                        text="称号:『特になし』発言時刻: "
+                    )
+                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                       c.name == 'tao-global'))
+                    await asyncio.sleep(10)
+                    await client.delete_message(message)
+                    return
 
             await client.delete_message(message)
             if message.content.startswith("称号作成 "):
                 if message.author.id == "304932786286886912":
                     ans = db_create(
                         str(message.content.split()[1]),
-                        int(message.content.split()[2]) == discord.utils.get(client.get_all_members(),id=int(message.content.split()[2]))
+                        int(message.content.split()[2])
                     )
                     if ans == True:
                         up = discord.Color(random.randint(0,0xFFFFFF))
@@ -1026,7 +1051,7 @@ async def on_message(message):
                                            c.name == 'tao-global'))
                     return
 
-            if db_syougou(int(message.author.id)) == True:
+            for row in db_syougou(int(message.author.id)):
                 embed = discord.Embed(
                     title="発言者:" + str(message.author),
                     description=message.content,
@@ -1037,7 +1062,7 @@ async def on_message(message):
                     url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
                 )
                 embed.set_footer(
-                    text=f"{str(db_create(int(message.author.id))).name}\n 発言時刻 "
+                    text=f"称号:『{str(row[0])}』\n 発言時刻 "
                 )
                 embed.set_author(
                     name=message.server.name,
@@ -1337,15 +1362,16 @@ def db_create(syougoo_name,author_id):
         c.execute("INSERT INTO syougou(syougoo_name, author_id) VALUES(?,?)",
                   (syougoo_name,author_id))
         return True
-
+    
 def db_syougou(author_id):
     author_id = int(author_id)
     with closing(sqlite3.connect("称号.db",isolation_level=None)) as con:
         c = con.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
-        c.execute('SELECT * FROM syougou WHERE syougoo_name AND author_id=?',(author_id,))
-        if c.fetchall():
-            return True
+        c.execute('SELECT syougoo_name, author_id FROM syougou WHERE author_id=?',(author_id,))
+        ans = c.fetchall()
+        for row in ans:
+            yield (row[0],row[1])
 
 client.loop.create_task(change_status())
-client.run(os.environ.get("TOKEN")
+client.run(os.environ.get("TOKEN"))
