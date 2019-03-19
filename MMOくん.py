@@ -1050,6 +1050,35 @@ async def on_message(message):
                     await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
                                            c.name == 'tao-global'))
                     return
+               
+            if message.content.startswith("称号剥奪 "):
+                if message.author.id == "304932786286886912":
+                    if db_reset_syougou(int(message.content.split()[1])) == True:
+                        embed = discord.Embed(
+                            description=f"<@{message.content.split()[1]}>さんの称号を剥奪いたしました。",
+                            color=discord.Color(random.randint(0,0xFFFFFF))
+                        )
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                               c.name == 'tao-global'))
+                        return
+
+                else:
+                    up = discord.Color(random.randint(0,0xFFFFFF))
+                    embed = discord.Embed(
+                        description="称号剥奪コマンドはこのBOTの管理者しか作成できないよ！",
+                        color=up,
+                        timestamp=message.timestamp
+                    )
+                    embed.set_footer(
+                        text="現在時刻:"
+                    )
+                    embed.set_author(
+                        name=message.server.name,
+                        icon_url=message.server.icon_url
+                    )
+                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                           c.name == 'tao-global'))
+                    return
 
             for row in db_syougou(int(message.author.id)):
                 embed = discord.Embed(
@@ -1372,6 +1401,14 @@ def db_syougou(author_id):
         ans = c.fetchall()
         for row in ans:
             yield (row[0],row[1])
+ 
+def db_reset_syougou(author_id):
+    author_id = int(author_id)
+    with closing(sqlite3.connect("称号.db",isolation_level=None)) as con:
+        c = con.cursor()
+        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
+        c.execute("delete from syougou where author_id=?",(author_id,))
+        return True
 
 client.loop.create_task(change_status())
 client.run(os.environ.get("TOKEN"))
