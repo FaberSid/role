@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------
 import os
 import asyncio
 import sys
@@ -24,13 +24,13 @@ except ImportError:
     sys.exit(1)
 # -------------------------------------------------------------------------------------------------------------------
 client = Bot(command_prefix='&',pm_help=True)
-message_counter=0
+message_counter = 0
 left = '⏪'
 right = '⏩'
 
 
-def predicate(message, l, r):
-    def check(reaction, user):
+def predicate(message,l,r):
+    def check(reaction,user):
         if reaction.message.id != message.id or user == client.user:
             return False
         if l and reaction.emoji == left:
@@ -40,6 +40,8 @@ def predicate(message, l, r):
         return False
 
     return check
+
+
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_ready():
@@ -166,9 +168,12 @@ async def on_member_join(member):
     role = discord.utils.get(member.server.roles,name="暇人")
     await client.add_roles(member,role)
     await client.send_message(client.get_channel('338173860719362060'),"{}さんに役職を付与しました。".format(member.mention))
-    await client.edit_channel(client.get_channel("537227342104494082"),name="総メンバー数: {}".format(len(member.server.members)))
-    await client.edit_channel(client.get_channel("537227343207333888"),name="ユーザー数: {}".format(len([member for member in member.server.members if not member.bot])))
-    await client.edit_channel(client.get_channel("537227343844868096"),name="ボットの数: {}".format(len([member for member in member.server.members if member.bot])))
+    await client.edit_channel(client.get_channel("537227342104494082"),
+                              name="総メンバー数: {}".format(len(member.server.members)))
+    await client.edit_channel(client.get_channel("537227343207333888"),name="ユーザー数: {}".format(
+        len([member for member in member.server.members if not member.bot])))
+    await client.edit_channel(client.get_channel("537227343844868096"),
+                              name="ボットの数: {}".format(len([member for member in member.server.members if member.bot])))
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -186,9 +191,12 @@ async def on_member_remove(member):
         url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(member)
     )
     await client.send_message(client.get_channel('338173860719362060'),embed=embed)
-    await client.edit_channel(client.get_channel("537227342104494082"),name="総メンバー数: {}".format(len(member.server.members)))
-    await client.edit_channel(client.get_channel("537227343207333888"),name="ユーザー数: {}".format(len([member for member in member.server.members if not member.bot])))
-    await client.edit_channel(client.get_channel("537227343844868096"),name="ボットの数: {}".format(len([member for member in member.server.members if member.bot])))
+    await client.edit_channel(client.get_channel("537227342104494082"),
+                              name="総メンバー数: {}".format(len(member.server.members)))
+    await client.edit_channel(client.get_channel("537227343207333888"),name="ユーザー数: {}".format(
+        len([member for member in member.server.members if not member.bot])))
+    await client.edit_channel(client.get_channel("537227343844868096"),
+                              name="ボットの数: {}".format(len([member for member in member.server.members if member.bot])))
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -198,6 +206,7 @@ async def change_status():
     while not client.is_closed:
         await client.change_presence(game=discord.Game(name="&helpしてね！"))
         await asyncio.sleep(30)
+
 
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
@@ -218,16 +227,19 @@ async def on_message(message):
                     await client.send_message(message.channel,embed=embed)
                     return
     if message.content.startswith("作品名"):
-        if not message.channel.id =="555311552971014153":
+        if not message.channel.id == "555311552971014153":
             await client.send_message(message.channel,f"{message.author.mention}さん\nこのチャンネルでは申請できません。")
             return
         if message.author.id == client.user.id:
             return
         await client.delete_message(message)
         icon_name = message.content.split()[1]
-        get = await client.send_message(message.channel,f"作品名:『{icon_name}』を承認しました。\n今から60秒間受付を開始致します。\nこのチャンネルで応募の画像を貼ってください。")
+        get = await client.send_message(message.channel,
+                                        f"作品名:『{icon_name}』を承認しました。\n今から60秒間受付を開始致します。\nこのチャンネルで応募の画像を貼ってください。")
+
         def check(message):
             return message.attachments
+
         check_all = await client.wait_for_message(timeout=60,author=message.author,channel=message.channel,check=check)
         if check_all:
             global message_counter,role,level,max_role
@@ -254,11 +266,39 @@ async def on_message(message):
             await client.delete_message(get)
             return
 
-    help_message=[
-    f"""[**このBOTの招待**](<https://discordapp.com/oauth2/authorize?client_id=550248294551650305&permissions=8&scope=bot>)\n何かがおかしい...。あれ...？なんで動かないの？\nと思ったら<@304932786286886912>にお申し付けください。\n\n[`1ページ目`]\nこのメッセージを表示。\n\n[`2ページ目`]\nこのBOTのコマンドの機能を表示。\n\n[`3ページ目`]\nTAOと連動するための設定方法を表示！\n\n[`4ページ目`]\nTAO公式鯖でのクランの機能説明。\n\n```このBOTは\n管理者:The.First.Step#3454\n副管理者:FaberSid#2459さん\n副管理者:midorist#5677さん\nの3人で制作しました！```\n\n1ページ目/4ページ中""",
-    f"""[`リスト 役職名`]\nリスト　役職名でその役職が何人に\n付与されているのかを表示します。\n\n[`全役職一覧`]\nメッセージが送信された鯖でのすべての役職を\n埋め込みメッセージで送信します。\n\n[`役職一覧`]\n自分が付与されている役職を\n埋め込みメッセージで送信します。\n\n[`全鯖一覧`]\nこのBOTを導入している鯖を全て表示します。\n\n[`バンリスト`]\nその鯖でBANされている人たちを表示します。\n\n2ページ目/4ページ中""",
-    f"""注意:これらのレベル設定コマンドは管理者権限が\nないと設定できません。\n\n[`&level lower upper 役職名`]\nこれでそのレベルが何処からどこまでの範囲で\n対応したいのかを設定することが出来ます！\n\n`[例: &level 1 10 aaa]`\nこれで自分のTAOでのレベルが1~10の時に\n『aaa』という役職が付与されるようになりました。\n\n[`&list`]\nこれで今設定されているレベル役職の全てを\n表示することが出来ます。\n\n[`&reset`]\n今のところ設定されているレベル役職の範囲を\n全てリセットいたします。\n\n(間違えてレベル役職の範囲を設定してしまった場合とかに\nお使いいただけたらなと思っています。)\n\n```役職更新ログというチャンネルを作成したら\nもし色んな人が役職を更新した際にその\nチャンネルにログが残るようになります。\n\n作ってみてね！```\n\n3ページ目/4ページ中""",
-    f"""これらの機能は[**TAO公式鯖**](<https://discord.gg/d7Qqfhy>)に入りクランに参加\nして頂かないとほとんど意味が無いです。 \n\n[`クラン勢力図`]\n他のクランと自分のクランとの比較をしたり、\nメンバーの数を確認したり、総長などは誰なのかを把握出来ます。\n\n[`自クラン勢力図`]\n自分が入っているクランの具体的なメンバーや\n総長などを表示することが出来ます。\n\n[`除外 @メンション 理由`]\n注意:これは総長や副総長ではないと使用できないです。\n自分のクランで悪目立ちしている人や荒らしなどの権限を\n剥奪することが出来ます。理由を書かないと除外できません。\n\n4ページ目/4ページ中""",
+    help_message = [
+        f"""[**このBOTの招待**](<https://discordapp.com/oauth2/authorize?client_id=550248294551650305&permissions=8&scope=bot>)\n何かがおかしい...。あれ...？なんで動かないの？\nと思ったら<@304932786286886912>にお申し付けください。\n\n[`1ページ目`]\nこのメッセージを表示。\n\n[`2ページ目`]\nこのBOTのコマンドの機能を表示。\n\n[`3ページ目`]\nTAOと連動するための設定方法を表示！\n\n[`4ページ目`]\nTAO公式鯖でのクランの機能説明。\n\n```このBOTは\n管理者:The.First.Step#3454\n副管理者:FaberSid#2459さん\n副管理者:midorist#5677さん\nの3人で制作しました！```\n\n1ページ目/4ページ中""",
+        f"""[`リスト 役職名`]\nリスト　役職名でその役職が何人に\n付与されているのかを表示します。\n\n[`全役職一覧`]\nメッセージが送信された鯖でのすべての役職を\n埋め込みメッセージで送信します。\n\n[`役職一覧`]\n自分が付与されている役職を\n埋め込みメッセージで送信します。\n\n[`全鯖一覧`]\nこのBOTを導入している鯖を全て表示します。\n\n[`バンリスト`]\nその鯖でBANされている人たちを表示します。\n\n2ページ目/4ページ中""",
+        f"""
+        注意:これらのレベル設定コマンドは管理者権限が
+        
+        [`&level lower upper 役職名`]
+        これでそのレベルが何処からどこまでの範囲で
+        対応したいのかを設定することが出来ます！
+        
+        `[例: &level 1 10 aaa]`
+        これで自分のTAOでのレベルが1~10の時に
+        『aaa』という役職が付与されるようになりました。
+        
+        [`&list`]
+        これで今設定されているレベル役職の全てを
+        表示することが出来ます。
+        
+        [`&reset`]
+        今のところ設定されているレベル役職の範囲を
+        全てリセットいたします。
+        
+        (間違えてレベル役職の範囲を設定してしまった場合とかに
+        お使いいただけたらなと思っています。)
+        
+        ```役職更新ログというチャンネルを作成したら
+        もし色んな人が役職を更新した際にその
+        チャンネルにログが残るようになります。
+        
+        作ってみてね！```
+        
+        3ページ目/4ページ中""",
+        f"""これらの機能は[**TAO公式鯖**](<https://discord.gg/d7Qqfhy>)に入りクランに参加\nして頂かないとほとんど意味が無いです。 \n\n[`クラン勢力図`]\n他のクランと自分のクランとの比較をしたり、\nメンバーの数を確認したり、総長などは誰なのかを把握出来ます。\n\n[`自クラン勢力図`]\n自分が入っているクランの具体的なメンバーや\n総長などを表示することが出来ます。\n\n[`除外 @メンション 理由`]\n注意:これは総長や副総長ではないと使用できないです。\n自分のクランで悪目立ちしている人や荒らしなどの権限を\n剥奪することが出来ます。理由を書かないと除外できません。\n\n4ページ目/4ページ中""",
     ]
 
     if message.content == "&help":
@@ -286,7 +326,6 @@ async def on_message(message):
             elif react.emoji == right:
                 index += 1
             await client.delete_message(msg)
-
 
     if message.content == "役職付与":
         if not message.channel.id == "535957520666066954":
@@ -362,7 +401,6 @@ async def on_message(message):
             await send(member_data)
             return
 
-
     if message.content == "全役職一覧":
         def slice(li,n):
             while li:
@@ -375,7 +413,7 @@ async def on_message(message):
                 role = [f'{i}: {role.mention}' for (i,role) in enumerate(roles,start=1)]
                 userembed = discord.Embed(
                     title="役職一覧:",
-                    description="\n".join(role[index:index+50]),
+                    description="\n".join(role[index:index + 50]),
                     color=discord.Color.light_grey()
                 )
                 userembed.set_thumbnail(
@@ -433,13 +471,14 @@ async def on_message(message):
             while li:
                 yield li[:n]
                 li = li[n:]
+
         index = 0
         while True:
             for servers in slice(list(client.servers),500):
                 all_server = [f'{i}: `{server.name}`' for (i,server) in enumerate(servers,start=1)]
                 embed = discord.Embed(
                     title="全鯖一覧",
-                    description="\n".join(all_server[index:index+25]),
+                    description="\n".join(all_server[index:index + 25]),
                     colour=discord.Color(random.randint(0,0xFFFFFF))
                 )
                 embed.set_footer(
@@ -486,7 +525,7 @@ async def on_message(message):
                     counter += 1
             await client.edit_channel(channel_name,name="総メッセージ数: {}".format(counter))
         return
-    
+
     # クラン関連
     # -------------------------------------------------------------------------------------------------------------------
     if message.channel.id == "550941424065970176":
@@ -941,7 +980,7 @@ async def on_message(message):
                         text=f"称号:『{str(row[0])}』発言時刻: "
                     )
                     await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                       c.name == 'tao-global'))
+                                           c.name == 'tao-global'))
                     await asyncio.sleep(10)
                     await client.delete_message(message)
                     return
@@ -965,13 +1004,12 @@ async def on_message(message):
                         text="称号:『特になし』発言時刻: "
                     )
                     await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                       c.name == 'tao-global'))
+                                           c.name == 'tao-global'))
                     await asyncio.sleep(10)
                     await client.delete_message(message)
                     return
 
             await client.delete_message(message)
-
 
             if message.content.startswith("称号作成 "):
                 if message.author.id == "304932786286886912":
@@ -1022,7 +1060,7 @@ async def on_message(message):
                     await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
                                            c.name == 'tao-global'))
                     return
-               
+
             if message.content.startswith("称号剥奪 "):
                 if message.author.id == "304932786286886912":
                     if db_reset_syougou(int(message.content.split()[1])) == True:
@@ -1128,7 +1166,7 @@ async def on_message(message):
             await client.send_message(message.channel,"**これは全権限者しか使用できないコマンドです.**")
             return
         try:
-            os.kill(os.getpid(), signal.CTRL_C_EVENT)
+            os.kill(os.getpid(),signal.CTRL_C_EVENT)
             # await client.logout()
         except Exception:
             print("logout_error")
@@ -1249,7 +1287,7 @@ async def on_message(message):
                 max_role = role.name
                 role_level[role_id] = (lower,upper)
             role_id = next((role_id for role_id,lu in role_level.items() if (lambda x: lu[0] <= x <= lu[1])(level)),
-                               None)
+                           None)
             role = discord.utils.get(message.server.roles,id=str(role_id))
             print(role_id)
             print(role)
