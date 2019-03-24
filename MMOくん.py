@@ -2,7 +2,7 @@
 import os
 import asyncio
 import sys
-import sqlite3
+import psycopg2
 import random
 import signal
 
