@@ -1297,7 +1297,7 @@ async def on_message(message):
 
 def db_read(server_id):
     server_id = int(server_id)
-    with closing(sqlite3.connect("MMOくん.db",isolation_level=None)) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS roles(server_id INTEGER,lower INTEGER,upper INTEGER,role_id INTEGER)")
         c.execute('SELECT lower,upper,role_id FROM roles WHERE server_id=? ORDER BY lower',(server_id,))
@@ -1308,19 +1308,18 @@ def db_read(server_id):
 
 def db_reset(server_id):
     server_id = int(server_id)
-    with closing(sqlite3.connect("MMOくん.db",isolation_level=None)) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS roles(server_id INTEGER,lower INTEGER,upper INTEGER,role_id INTEGER)")
         c.execute("delete from roles where server_id=?",(server_id,))
         return True  # print("リセット完了")
-
 
 def db_write(server_id,lower,upper,role_id):
     server_id = int(server_id)
     lower = int(lower)
     upper = int(upper)
     role_id = int(role_id)
-    with closing(sqlite3.connect("MMOくん.db",isolation_level=None)) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS roles(server_id INTEGER,lower INTEGER,upper INTEGER,role_id INTEGER)")
         if lower > upper:
@@ -1339,7 +1338,7 @@ def db_write(server_id,lower,upper,role_id):
     
 def db_get_message(author_id):
     author_id = int(author_id)
-    with closing(sqlite3.connect("ブラック企業.db",isolation_level=None)) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS get_author(author_id INTEGER)")
         c.execute('SELECT * FROM get_author WHERE author_id=?',(author_id,))
@@ -1349,7 +1348,7 @@ def db_get_message(author_id):
 
 def db_get_author(author_id):
     author_id = int(author_id)
-    with closing(sqlite3.connect("ブラック企業.db",isolation_level=None)) as con:
+        with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS get_author(author_id INTEGER)")
         c.execute("INSERT INTO get_author(author_id) VALUES(?)",(author_id,))
@@ -1358,7 +1357,7 @@ def db_get_author(author_id):
 def db_create(syougoo_name,author_id):
     syougoo_name = str(syougoo_name)
     author_id = int(author_id)
-    with closing(sqlite3.connect("称号.db",isolation_level=None)) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
         c.execute('SELECT * FROM syougou WHERE author_id=?',(author_id,))
@@ -1373,7 +1372,7 @@ def db_create(syougoo_name,author_id):
     
 def db_syougou(author_id):
     author_id = int(author_id)
-    with closing(sqlite3.connect("称号.db",isolation_level=None)) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
         c.execute('SELECT syougoo_name, author_id FROM syougou WHERE author_id=?',(author_id,))
@@ -1383,7 +1382,7 @@ def db_syougou(author_id):
  
 def db_reset_syougou(author_id):
     author_id = int(author_id)
-    with closing(sqlite3.connect("称号.db",isolation_level=None)) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
         c.execute("delete from syougou where author_id=?",(author_id,))
