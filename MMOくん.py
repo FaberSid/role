@@ -1,4 +1,4 @@
-# --------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------
 import os
 import asyncio
 import sys
@@ -1335,96 +1335,106 @@ async def on_message(message):
 
 def db_read(server_id):
     server_id = int(server_id)
-    with closing(psycopg2.connect(os.environ("DATABASE_URL"))) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS roles(server_id INTEGER,lower INTEGER,upper INTEGER,role_id INTEGER)")
-        c.execute('SELECT lower,upper,role_id FROM roles WHERE server_id=? ORDER BY lower',(server_id,))
+        c.execute("CREATE TABLE IF NOT EXISTS roles(server_id BigInt,lower INTEGER,upper INTEGER,role_id BigInt);")
+        c.execute('SELECT lower,upper,role_id FROM roles WHERE server_id=%s ORDER BY lower;',(server_id,))
         ans = c.fetchall()
         for row in ans:
+            con.commit()
             yield (row[0],row[1],row[2])
 
 
 def db_reset(server_id):
     server_id = int(server_id)
-    with closing(psycopg2.connect(os.environ("DATABASE_URL"))) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS roles(server_id INTEGER,lower INTEGER,upper INTEGER,role_id INTEGER)")
-        c.execute("delete from roles where server_id=?",(server_id,))
+        c.execute("CREATE TABLE IF NOT EXISTS roles(server_id BigInt,lower INTEGER,upper INTEGER,role_id BigInt);")
+        c.execute("delete from roles where server_id=%s;",(server_id,))
+        con.commit()
         return True  # print("リセット完了")
+
 
 def db_write(server_id,lower,upper,role_id):
     server_id = int(server_id)
     lower = int(lower)
     upper = int(upper)
     role_id = int(role_id)
-    with closing(psycopg2.connect(os.environ("DATABASE_URL"))) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS roles(server_id INTEGER,lower INTEGER,upper INTEGER,role_id INTEGER)")
+        c.execute("CREATE TABLE IF NOT EXISTS roles(server_id BigInt,lower INTEGER,upper INTEGER,role_id BigInt);")
         if lower > upper:
             lower,upper = upper,lower
-        c.execute('SELECT * FROM roles WHERE server_id=? AND lower<=? AND upper>=?',(server_id,lower,lower))
+        c.execute('SELECT * FROM roles WHERE server_id=%s AND lower<=%s AND upper>=%s;',(server_id,lower,lower))
         if len(c.fetchall()) > 0:
             return -1  # "役職の範囲が重なっています"
-        c.execute('SELECT * FROM roles WHERE server_id=? AND lower<=? AND upper>=?',(server_id,upper,upper))
+        c.execute('SELECT * FROM roles WHERE server_id=%s AND lower<=%s AND upper>=%s;',(server_id,upper,upper))
         if len(c.fetchall()) > 0:
             return -2  # "役職の範囲が重なっています"
-        c.execute('SELECT * FROM roles WHERE server_id=? AND role_id=?',(server_id,role_id))
+        c.execute('SELECT * FROM roles WHERE server_id=%s AND role_id=%s;',(server_id,role_id))
         if len(c.fetchall()) > 0:
             return -3  # "役職はもう既にあります"
-        c.execute("INSERT INTO roles(server_id, lower, upper, role_id) VALUES(?,?,?,?)",(server_id,lower,upper,role_id))
+        c.execute("INSERT INTO roles(server_id, lower, upper, role_id) VALUES(%s,%s,%s,%s);",(server_id,lower,upper,role_id))
+        con.commit()
         return True
-    
+
+
 def db_get_message(author_id):
     author_id = int(author_id)
-    with closing(psycopg2.connect(os.environ("DATABASE_URL"))) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS get_author(author_id INTEGER)")
-        c.execute('SELECT * FROM get_author WHERE author_id=?',(author_id,))
+        c.execute("CREATE TABLE IF NOT EXISTS get_author(author_id BigInt);")
+        c.execute('SELECT * FROM get_author WHERE author_id=%s;',(author_id,))
         if c.fetchall():
-            print("SELECT")
+            con.commit()
             return True
+
 
 def db_get_author(author_id):
     author_id = int(author_id)
-        with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS get_author(author_id INTEGER)")
-        c.execute("INSERT INTO get_author(author_id) VALUES(?)",(author_id,))
+        c.execute("CREATE TABLE IF NOT EXISTS get_author(author_id BigInt);")
+        c.execute("INSERT INTO get_author(author_id) VALUES(%s);",(author_id,))
+        con.commit()
         return True
+
 
 def db_create(syougoo_name,author_id):
     syougoo_name = str(syougoo_name)
     author_id = int(author_id)
-    with closing(psycopg2.connect(os.environ("DATABASE_URL"))) as con:
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
-        c.execute('SELECT * FROM syougou WHERE author_id=?',(author_id,))
+        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name text,author_id BigInt);")
+        c.execute('SELECT * FROM syougou WHERE author_id=%s;',(author_id,))
         if c.fetchall():
             return -1
-        c.execute('SELECT * FROM syougou WHERE syougoo_name AND author_id=?',(author_id,))
-        if c.fetchall():
-            return -2
-        c.execute("INSERT INTO syougou(syougoo_name, author_id) VALUES(?,?)",
-                  (syougoo_name,author_id))
-        return True
-    
-def db_syougou(author_id):
-    author_id = int(author_id)
-    with closing(psycopg2.connect(os.environ("DATABASE_URL"))) as con:
-        c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
-        c.execute('SELECT syougoo_name, author_id FROM syougou WHERE author_id=?',(author_id,))
-        ans = c.fetchall()
-        for row in ans:
-            yield (row[0],row[1])
- 
-def db_reset_syougou(author_id):
-    author_id = int(author_id)
-    with closing(psycopg2.connect(os.environ("DATABASE_URL"))) as con:
-        c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id INTEGER)")
-        c.execute("delete from syougou where author_id=?",(author_id,))
+        c.execute("INSERT INTO syougou(syougoo_name, author_id) VALUES(%s,%s);",(syougoo_name,author_id))
+        con.commit()
         return True
 
+
+def db_syougou(author_id):
+    author_id = int(author_id)
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
+        c = con.cursor()
+        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id BigInt);")
+        c.execute('SELECT syougoo_name, author_id FROM syougou WHERE author_id=%s;',(author_id,))
+        ans = c.fetchall()
+        for row in ans:
+            con.commit()
+            yield (row[0],row[1])
+
+
+def db_reset_syougou(author_id):
+    author_id = int(author_id)
+    with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
+        c = con.cursor()
+        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id BigInt);")
+        c.execute("delete from syougou where author_id=%s;",(author_id,))
+        con.commit()
+        return True
+
+
 client.loop.create_task(change_status())
-client.run(os.environ("TOKEN"))
+client.run(os.environ.get("TOKEN"))
