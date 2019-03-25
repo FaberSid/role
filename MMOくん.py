@@ -1339,12 +1339,14 @@ def db_read(server_id):
     c = con.cursor()
     c.execute("CREATE TABLE IF NOT EXISTS roles(server_id BigInt,lower INTEGER,upper INTEGER,role_id BigInt);")
     c.execute('SELECT lower,upper,role_id FROM roles WHERE server_id=%s ORDER BY lower;',(server_id,))
+    con.commit()
     ans = c.fetchall()
     for row in ans:
-    con.commit()
-    c.close()
-    con.close()
         yield (row[0],row[1],row[2])
+    else:
+        con.commit()
+        c.close()
+        con.close() 
 
 
 def db_reset(server_id):
@@ -1435,10 +1437,11 @@ def db_syougou(author_id):
     c.execute('SELECT syougoo_name, author_id FROM syougou WHERE author_id=%s;',(author_id,))
     ans = c.fetchall()
     for row in ans:
+        yield (row[0],row[1])
+    else:
         con.commit()
         c.close()
         con.close()
-        yield (row[0],row[1])
 
 
 def db_reset_syougou(author_id):
