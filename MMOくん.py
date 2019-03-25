@@ -1405,7 +1405,7 @@ def db_create(syougoo_name,author_id):
     author_id = int(author_id)
     with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name text,author_id BigInt);")
+        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name varchar,author_id BigInt);")
         c.execute('SELECT * FROM syougou WHERE author_id=%s;',(author_id,))
         if c.fetchall():
             return -1
@@ -1418,7 +1418,7 @@ def db_syougou(author_id):
     author_id = int(author_id)
     with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id BigInt);")
+        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name varchar,author_id BigInt);")
         c.execute('SELECT syougoo_name, author_id FROM syougou WHERE author_id=%s;',(author_id,))
         ans = c.fetchall()
         for row in ans:
@@ -1430,11 +1430,10 @@ def db_reset_syougou(author_id):
     author_id = int(author_id)
     with closing(psycopg2.connect(os.environ.get("DATABASE_URL"))) as con:
         c = con.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name INTEGER,author_id BigInt);")
+        c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name varchar,author_id BigInt);")
         c.execute("delete from syougou where author_id=%s;",(author_id,))
         con.commit()
         return True
-
 
 client.loop.create_task(change_status())
 client.run(os.environ.get("TOKEN"))
