@@ -1432,7 +1432,8 @@ def db_create(syougoo_name,author_id):
 
 def db_syougou(author_id):
     author_id = int(author_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))c = con.cursor()
+    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
+    c = con.cursor()
     c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name varchar,author_id BigInt);")
     c.execute('SELECT syougoo_name, author_id FROM syougou WHERE author_id=%s;',(author_id,))
     ans = c.fetchall()
