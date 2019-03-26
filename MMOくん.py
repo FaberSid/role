@@ -1342,7 +1342,7 @@ async def on_message(message):
 
     if message.content.startswith("&level "):
         if message.author.server_permissions.administrator:
-            role = discord.utils.get(message.server.roles,name=message.content.split()[3])
+            role = discord.utils.get(message.server.roles,name=message.content.split(None,3)[3])
             ans = db_write(
                 int(message.server.id),
                 int(message.content.split()[1]),
