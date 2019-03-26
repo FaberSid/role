@@ -25,6 +25,7 @@ except ImportError:
 # -------------------------------------------------------------------------------------------------------------------
 client = Bot(command_prefix='&',pm_help=True)
 message_counter = 0
+count_message = 0
 left = '⏪'
 right = '⏩'
 
