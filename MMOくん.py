@@ -25,7 +25,6 @@ except ImportError:
 # -------------------------------------------------------------------------------------------------------------------
 client = Bot(command_prefix='&',pm_help=True)
 message_counter = 0
-count_message = 0
 left = '⏪'
 right = '⏩'
 
@@ -528,12 +527,9 @@ async def on_message(message):
         return
     
     if message.content.startswith('&TAO') or message.content.startswith("&tao"):
-        global count_message
-        count_message+= 1
         sayd = message.content[5:]
         try:
             embed=discord.Embed(
-                title="Support Number:** " + str(count_message) + "**",
                 description="・発言者:" + message.author.name + "\n・送り先:" + message.server.name,
                 color=discord.Color.dark_grey(),
                 timestamp=message.timestamp
