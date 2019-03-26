@@ -528,6 +528,10 @@ async def on_message(message):
     
     if message.content.startswith('&TAO') or message.content.startswith("&tao"):
         sayd = message.content[5:]
+        if sayd == "":
+            await client.send_message(message.channel,
+                                      "```『&taoか&TAO』 <text>\n\ntextに入力した内容をBotがSupport鯖へ送信します。(実行したコマンドは削除されます)```")
+            return 
         try:
             embed=discord.Embed(
                 description="・発言者:" + message.author.name + "\n・送り先:" + message.server.name,
