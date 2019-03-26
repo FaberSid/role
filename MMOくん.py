@@ -268,7 +268,7 @@ async def on_message(message):
 
     help_message = [
         f"""[**このBOTの招待**](<https://discordapp.com/oauth2/authorize?client_id=550248294551650305&permissions=8&scope=bot>)\n何かがおかしい...。あれ...？なんで動かないの？\nと思ったら<@304932786286886912>にお申し付けください。\n\n[`1ページ目`]\nこのメッセージを表示。\n\n[`2ページ目`]\nこのBOTのコマンドの機能を表示。\n\n[`3ページ目`]\nTAOと連動するための設定方法を表示！\n\n[`4ページ目`]\nTAO公式鯖でのクランの機能説明。\n\n```このBOTは\n管理者:The.First.Step#3454\n副管理者:FaberSid#2459さん\n副管理者:midorist#5677さん\nの3人で制作しました！```\n\n1ページ目/4ページ中""",
-        f"""[`リスト 役職名`]\nリスト　役職名でその役職が何人に\n付与されているのかを表示します。\n\n[`全役職一覧`]\nメッセージが送信された鯖でのすべての役職を\n埋め込みメッセージで送信します。\n\n[`役職一覧`]\n自分が付与されている役職を\n埋め込みメッセージで送信します。\n\n[`全鯖一覧`]\nこのBOTを導入している鯖を全て表示します。\n\n[`バンリスト`]\nその鯖でBANされている人たちを表示します。\n\n2ページ目/4ページ中""",
+        f"""[`リスト 役職名`]\nリスト　役職名でその役職が何人に\n付与されているのかを表示します。\n\n[`全役職一覧`]\nメッセージが送信された鯖でのすべての役職を\n埋め込みメッセージで送信します。\n\n[`役職一覧`]\n自分が付与されている役職を\n埋め込みメッセージで送信します。\n\n[`全鯖一覧`]\nこのBOTを導入している鯖を全て表示します。\n\n[`バンリスト`]\nその鯖でBANされている人たちを表示します。\n\n[`&taoか&TAO <内容>`]\nこれをしたらTAO鯖に直してほしいところや\nTAOが落ちているということを伝えれます！\n\n2ページ目/4ページ中""",
         f"""
         注意:これらのレベル設定コマンドは管理者権限が
         
@@ -525,6 +525,50 @@ async def on_message(message):
                     counter += 1
             await client.edit_channel(channel_name,name="総メッセージ数: {}".format(counter))
         return
+    
+    if message.content.startswith('&TAO') or message.content.startswith("&tao"):
+        global count_message
+        count_message+= 1
+        sayd = message.content[5:]
+        try:
+            embed=discord.Embed(
+                title="Support Number:** " + str(count_message) + "**",
+                description="・発言者:" + message.author.name + "\n・送り先:" + message.server.name,
+                color=discord.Color.dark_grey(),
+                timestamp=message.timestamp
+            )
+            embed.set_thumbnail(
+                url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+            )
+            embed.add_field(
+                name="**サポートしてほしい内容:**",
+                value=f"```{sayd}```"
+           )
+            embed.set_footer(
+                text="発言時刻: "
+            )
+            embed.set_author(
+                name=client.user.name,
+                icon_url=client.user.avatar_url,
+            )
+            await client.delete_message(message)
+            await client.send_message(client.get_channel('559986180859625483'), embed=embed)
+            remembed=discord.Embed(
+                title="報告した内容:",
+                description=f"""
+                ```{sayd}```
+                
+                ご協力ありがとうございます。
+                このメッセージはTAOを管理してる鯖に送られました。
+                """,
+                color=discord.Color.dark_grey()
+            )
+            await client.send_message(message.channel, embed=remembed)
+        except IndexError:
+            await client.send_message(message.channel,
+                                      "```『&taoか&TAO』 <text>\n\ntextに入力した内容をBotがSupport鯖へ送信します。(実行したコマンドは削除されます)```")
+        finally:
+            pass
 
     # クラン関連
     # -------------------------------------------------------------------------------------------------------------------
@@ -1118,6 +1162,70 @@ async def on_message(message):
                 else:
                     await send(server_data)
                     return
+            
+            if message.content == "この鯖の詳細":
+                server = message.server
+                region = message.server.region
+                channelss = len(message.server.channels)
+                memberss = len(message.server.members)
+                role = str(len(server.roles))
+                emoji = str(len(server.emojis))
+                owner = server.owner
+                tekitou = server.role_hierarchy[0]
+                online = 0
+                for i in server.members:
+                    if str(i.status) == 'online' or str(i.status) == 'idle' or str(i.status) == 'dnd':
+                        online += 1
+                up = discord.Color(random.randint(0,0xFFFFFF))
+                userembed = discord.Embed(
+                    title=server.name + "の情報:",
+                    color=up
+                )
+                userembed.set_thumbnail(
+                    url=server.icon_url
+                )
+                userembed.add_field(
+                    name="サーバーID:",
+                    value=server.id
+                )
+                userembed.add_field(
+                    name="サーバーオーナ:",
+                    value=owner
+                )
+                userembed.add_field(
+                    name="サーバーリュージョン:",
+                    value=region
+                )
+                userembed.add_field(
+                    name="メンバー数:",
+                    value=memberss
+                )
+                userembed.add_field(
+                    name="チャンネル数:",
+                    value=channelss
+                )
+                userembed.add_field(
+                    name="役職数:",
+                    value=role
+                )
+                userembed.add_field(
+                    name="現在オンラインの数:",
+                    value=online
+                )
+                userembed.add_field(
+                    name="鯖に追加した絵文字の数:",
+                    value=emoji
+                )
+                userembed.add_field(
+                    name="サーバー最上位役職:",
+                    value=tekitou
+                )
+                userembed.set_footer(
+                    text="サーバー作成日: " + server.created_at.__format__(' %Y/%m/%d %H:%M:%S')
+                )
+                await asyncio.gather(*(client.send_message(c,embed=userembed) for c in client.get_all_channels() if
+                                       c.name == 'tao-global'))
+                return
 
             for row in db_syougou(int(message.author.id)):
                 embed = discord.Embed(
