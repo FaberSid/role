@@ -174,6 +174,11 @@ async def on_member_join(member):
         len([member for member in member.server.members if not member.bot])))
     await client.edit_channel(client.get_channel("537227343844868096"),
                               name="ボットの数: {}".format(len([member for member in member.server.members if member.bot])))
+    
+    for row in db_join_member(int(member.id)):
+        if int(row[0]) == int(member.id):
+            role =discord.utils.get(member.server.roles,name=str(row[1]))
+            await client.add_roles(member,role)
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -197,6 +202,15 @@ async def on_member_remove(member):
         len([member for member in member.server.members if not member.bot])))
     await client.edit_channel(client.get_channel("537227343844868096"),
                               name="ボットの数: {}".format(len([member for member in member.server.members if member.bot])))
+    
+    for role in member.roles:
+        ans = db_get_role(
+            int(member.id),
+            role.name)
+        if ans == True:
+            print("ok")
+    else:
+        return
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -1564,6 +1578,35 @@ def db_reset_syougou(author_id):
     c.close()
     con.close()
     return True
+
+
+def db_get_role(author_id,role_id):
+    author_id = int(author_id)
+    role_id = str(role_id)
+    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
+    c = con.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id BigInt);")
+    c.execute("INSERT INTO get_role(author_id, role_id) VALUES(%s,&S);",
+                  (author_id,role_id))
+    con.commit()
+    c.close()
+    con.close()
+    return True
+
+def db_join_member(author_id):
+    author_id = int(author_id)
+    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
+    c = con.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id BigInt);")
+    c.execute('SELECT author_id, role_id FROM get_role WHERE author_id=%s;',(author_id,))
+    ans = c.fetchall()
+    for row in ans:
+        yield (row[0],row[1])
+    else:
+        con.commit()
+        c.close()
+        con.close()
+        
 
 client.loop.create_task(change_status())
 client.run(os.environ.get("TOKEN")
