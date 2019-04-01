@@ -1586,8 +1586,7 @@ def db_get_role(author_id,role_id):
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
     c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id BigInt);")
-    c.execute("INSERT INTO get_role(author_id, role_id) VALUES(%s,&S);",
-                  (author_id,role_id))
+    c.execute("INSERT INTO get_role(author_id, role_id) VALUES(%s,%S);",(author_id,role_id))
     con.commit()
     c.close()
     con.close()
