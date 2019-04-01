@@ -229,6 +229,11 @@ async def change_status():
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
+    if message.content == "reset":
+        if db_reset_all_role() == True:
+            await client.send_message(message.channel,"ok")
+            return
+        
     if message.content.find("https://discord.gg/") != -1:
         if message.server.id == "337524390155780107":
             if not message.channel.id == "421954703509946368":
@@ -1616,6 +1621,16 @@ def db_reset_role(author_id):
     c = con.cursor()
     c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id INTEGER);")
     c.execute("delete from get_role where author_id=%s;",(author_id,))
+    con.commit()
+    c.close()
+    con.close()
+    return True
+
+def db_reset_all_role():
+    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
+    c = con.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id INTEGER);")
+    c.execute("delete from get_role;)
     con.commit()
     c.close()
     con.close()
