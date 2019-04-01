@@ -1630,7 +1630,7 @@ def db_reset_all_role():
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
     c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id INTEGER);")
-    c.execute("delete from get_role;)
+    c.execute("delete from get_role;")
     con.commit()
     c.close()
     con.close()
