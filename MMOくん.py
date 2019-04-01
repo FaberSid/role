@@ -1609,4 +1609,4 @@ def db_join_member(author_id):
         
 
 client.loop.create_task(change_status())
-client.run(os.environ.get("TOKEN")
+client.run(os.environ.get("TOKEN"))
