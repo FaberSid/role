@@ -177,10 +177,12 @@ async def on_member_join(member):
     
     for row in db_join_member(int(member.id)):
         if int(row[0]) == int(member.id):
-            role =discord.utils.get(member.server.roles,name=str(row[1]))
+            role = discord.utils.get(member.server.roles,name=str(row[1]))
             await client.add_roles(member,role)
-            if db_reset_role(int(member.id)) == True:
-                return
+            await asyncio.sleep(1)
+    else:
+        if db_reset_role(int(member.id)) == True:
+            return
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -209,8 +211,6 @@ async def on_member_remove(member):
         ans = db_get_role(
             int(member.id),
             role.name)
-        if role.name == "@everyone":
-            return 
         if ans == True:
             print("ok")
     else:
@@ -229,11 +229,6 @@ async def change_status():
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
-    if message.content == "reset":
-        if db_reset_all_role() == True:
-            await client.send_message(message.channel,"ok")
-            return
-        
     if message.content.find("https://discord.gg/") != -1:
         if message.server.id == "337524390155780107":
             if not message.channel.id == "421954703509946368":
@@ -1589,48 +1584,43 @@ def db_reset_syougou(author_id):
     return True
 
 
-def db_get_role(author_id,role_id):
+def db_get_role(author_id,role_name):
     author_id = int(author_id)
-    role_id = str(role_id)
+    role_name = str(role_name)
+    if role_name == "@everyone":
+        return
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id INTEGER);")
-    c.execute("INSERT INTO get_role(author_id, role_id) VALUES(%s,%s);",(author_id,role_id))
+    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_name varchar);")
+    c.execute("INSERT INTO get_role(author_id, role_name) VALUES(%s,%s);",(author_id,role_name))
     con.commit()
     c.close()
     con.close()
     return True
 
+
 def db_join_member(author_id):
     author_id = int(author_id)
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id INTEGER);")
-    c.execute('SELECT author_id, role_id FROM get_role WHERE author_id=%s;',(author_id,))
+    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_name varchar);")
+    c.execute('SELECT author_id, role_name FROM get_role WHERE author_id=%s;',(author_id,))
     ans = c.fetchall()
     for row in ans:
+        print(row)
         yield (row[0],row[1])
     else:
         con.commit()
         c.close()
         con.close()
 
+
 def db_reset_role(author_id):
     author_id = int(author_id)
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id INTEGER);")
+    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_name varchar);")
     c.execute("delete from get_role where author_id=%s;",(author_id,))
-    con.commit()
-    c.close()
-    con.close()
-    return True
-
-def db_reset_all_role():
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
-    c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id INTEGER);")
-    c.execute("delete from get_role;")
     con.commit()
     c.close()
     con.close()
@@ -1638,4 +1628,4 @@ def db_reset_all_role():
         
 
 client.loop.create_task(change_status())
-client.run(os.environ.get("TOKEN")
+client.run(os.environ.get("TOKEN"))
