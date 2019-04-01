@@ -207,6 +207,8 @@ async def on_member_remove(member):
         ans = db_get_role(
             int(member.id),
             role.name)
+        if role.name == "@everyone":
+            return 
         if ans == True:
             print("ok")
     else:
