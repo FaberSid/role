@@ -1585,7 +1585,7 @@ def db_get_role(author_id,role_id):
     role_id = str(role_id)
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id BigInt);")
+    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id varchar);")
     c.execute("INSERT INTO get_role(author_id, role_id) VALUES(%s,%s);",(author_id,role_id))
     con.commit()
     c.close()
@@ -1596,7 +1596,7 @@ def db_join_member(author_id):
     author_id = int(author_id)
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id BigInt);")
+    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_id varchar);")
     c.execute('SELECT author_id, role_id FROM get_role WHERE author_id=%s;',(author_id,))
     ans = c.fetchall()
     for row in ans:
