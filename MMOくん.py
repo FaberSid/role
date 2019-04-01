@@ -1566,4 +1566,4 @@ def db_reset_syougou(author_id):
     return True
 
 client.loop.create_task(change_status())
-client.run(os.environ.get("TOKEN")
+client.run(os.environ.get("TOKEN"))
