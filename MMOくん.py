@@ -225,7 +225,16 @@ async def change_status():
         await client.change_presence(game=discord.Game(name="&helpしてね！"))
         await asyncio.sleep(30)
 
+async def change_role():
+    await client.wait_until_ready()
 
+    while not client.is_closed:
+        server = client.get_server('337524390155780107')
+        for role in server.roles:
+            if role.id == '562512114166792192':
+                up =discord.Color(random.randint(0,0xFFFFFF))
+                await client.edit_role(server=server,role=role,colour=up)
+                await asyncio.sleep(10)
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
@@ -1626,6 +1635,6 @@ def db_reset_role(author_id):
     con.close()
     return True
         
-
+client.loop.create_task(change_role())
 client.loop.create_task(change_status())
 client.run(os.environ.get("TOKEN"))
