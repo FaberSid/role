@@ -807,7 +807,7 @@ async def on_message(message):
                 role = discord.utils.get(message.server.roles,name="境界線の彼方:総長&副総長")
                 embed = discord.Embed(
                     title="『境界線の彼方クラン』の勢力図",
-                    description=f"{role.mention}権限持ち:\n総長:<@348385393160355840>さん\n副総長:現在無し\n\n{role1.mention}のメンバー表:\n" + member_data,
+                    description=f"{role.mention}権限持ち:\n総長:<@348385393160355840>さん\n副総長:<@252247332630954005>さん\n\n{role1.mention}のメンバー表:\n" + member_data,
                     color=up
                 )
                 embed.set_footer(
@@ -974,7 +974,7 @@ async def on_message(message):
             title="クランの勢力表:",
             description=f"""
                         {role1.mention}: {count1}名
-                        総長:<@348385393160355840>さん | 副総長:現在無し
+                        総長:<@348385393160355840>さん | 副総長:<@252247332630954005>さん
 
                         {role2.mention}: {count2}名
                         総長:<@376728551904247808>さん | 副総長:<@434340186898563073>さん
