@@ -807,7 +807,7 @@ async def on_message(message):
                 role = discord.utils.get(message.server.roles,name="境界線の彼方:総長&副総長")
                 embed = discord.Embed(
                     title="『境界線の彼方クラン』の勢力図",
-                    description=f"{role.mention}権限持ち:\n総長:<@348385393160355840>さん\n副総長:<@299909215366152193>さん\n\n{role1.mention}のメンバー表:\n" + member_data,
+                    description=f"{role.mention}権限持ち:\n総長:<@348385393160355840>さん\n副総長:現在無し\n\n{role1.mention}のメンバー表:\n" + member_data,
                     color=up
                 )
                 embed.set_footer(
@@ -903,7 +903,7 @@ async def on_message(message):
                 role1 = discord.utils.get(message.server.roles,name="休日のとある一日")
                 embed = discord.Embed(
                     title="『休日のとある一日クラン』の勢力図",
-                    description=f"{role.mention}権限持ち:\n今はだれも居ません！\n\n{role1.mention}のメンバー表:\n" + member_data,
+                    description=f"{role.mention}権限持ち:\n総長:<@477450637710196737>さん\n副総長:<@469384078160953354>さん\n\n{role1.mention}のメンバー表:\n" + member_data,
                     color=up
                 )
                 embed.set_footer(
@@ -974,7 +974,7 @@ async def on_message(message):
             title="クランの勢力表:",
             description=f"""
                         {role1.mention}: {count1}名
-                        総長:<@348385393160355840>さん | 副総長:<@299909215366152193>さん
+                        総長:<@348385393160355840>さん | 副総長:現在無し
 
                         {role2.mention}: {count2}名
                         総長:<@376728551904247808>さん | 副総長:<@434340186898563073>さん
@@ -983,7 +983,7 @@ async def on_message(message):
                         総長:<@460208854362357770>さん | 副総長:<@507161988682743818>さん
 
                         {role4.mention}: {count4}名
-                        総長:現在無し | 副総長:現在無し
+                        総長:<@477450637710196737>さん | 副総長:<@469384078160953354>さん
 
                         {role5.mention}: {count5}名
                         総長:現在無し | 副総長:現在無し
@@ -1637,4 +1637,4 @@ def db_reset_role(author_id):
         
 client.loop.create_task(change_role())
 client.loop.create_task(change_status())
-client.run(os.environ.get("TOKEN")
+client.run(os.environ.get("TOKEN"))
