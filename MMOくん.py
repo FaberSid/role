@@ -1613,7 +1613,7 @@ def db_join_member(author_id):
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
     c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_name varchar);")
-    c.execute('SELECT author_id, role_name FROM get_role WHERE author_id=%s;',(author_id,))
+    c.execute("""SELECT author_id, role_name FROM get_role WHERE author_id='%s';""",(author_id,))
     ans = c.fetchall()
     for row in ans:
         print(row)
