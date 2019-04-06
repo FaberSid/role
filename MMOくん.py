@@ -612,6 +612,7 @@ async def on_message(message):
                         await client.send_message(message.channel,"`1000000`より上の数は配布できません。")
                         return
                     else:
+                        await asyncio.sleep(2)
                         await client.send_message(message.channel,f"::exp <@{member.id}> {int(message.content.split()[2])}")
             else:
                 return
