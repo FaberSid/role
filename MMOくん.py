@@ -611,11 +611,17 @@ async def on_message(message):
                     if int(message.content.split()[2]) >= 1000000:
                         await client.send_message(message.channel,"`1000000`より上の数は配布できません。")
                         return
-                    else:
-                        await asyncio.sleep(2)
-                        await client.send_message(message.channel,f"::exp <@{member.id}> {int(message.content.split()[2])}")
-            else:
-                return
+                    await asyncio.sleep(1)
+                    await client.send_message(message.channel,
+                                            f"::exp <@{member.id}> {int(message.content.split()[2])}")
+            up = discord.Color(random.randint(0,0xFFFFFF))
+            embed = discord.Embed(
+                title="クラン経験値配布ログ",
+                description=f"{role.mention}情報!!:\n{message.author.mention}さんが経験値をばら撒きました！\n\n`{len([m for m in message.server.members if role in m.roles])}`名のメンバー全員に[`{int(message.content.split()[2])}EXP`]を付与しました。\nこのクランに合計[`{len([m for m in message.server.members if role in m.roles]) * int(message.content.split()[2])}EXP`]を配りました！",
+                colour=up
+            )
+            await client.send_message(message.channel,embed=embed)
+            return
             
     if message.channel.id == "550941424065970176":
         if message.author.id == client.user.id:
@@ -1654,4 +1660,4 @@ def db_reset_role(author_id):
         
 client.loop.create_task(change_role())
 client.loop.create_task(change_status())
-client.run(os.environ.get("TOKEN")
+client.run(os.environ.get("TOKEN"))
