@@ -600,6 +600,22 @@ async def on_message(message):
 
     # クラン関連
     # -------------------------------------------------------------------------------------------------------------------
+    if message.author.id == "304932786286886912":
+        if message.content.startswith("経験値配布"):
+            role = discord.utils.get(message.server.roles,name=message.content.split()[1])
+            for member in message.server.members:
+                if role is None:
+                    await client.send_message(message.channel,"その役職はこの鯖にはありません。")
+                    return
+                if role in member.roles:
+                    if int(message.content.split()[2]) >= 1000000:
+                        await client.send_message(message.channel,"`1000000`より上の数は配布できません。")
+                        return
+                    else:
+                        await client.send_message(message.channel,f"::exp <@{member.id}> {int(message.content.split()[2])}")
+            else:
+                return
+            
     if message.channel.id == "550941424065970176":
         if message.author.id == client.user.id:
             return
