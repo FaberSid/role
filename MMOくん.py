@@ -620,7 +620,7 @@ async def on_message(message):
                 description=f"{role.mention}情報!!:\n{message.author.mention}さんが経験値をばら撒きました！\n\n`{len([m for m in message.server.members if role in m.roles])}`名のメンバー全員に[`{int(message.content.split()[2])}EXP`]を付与しました。\nこのクランに合計[`{len([m for m in message.server.members if role in m.roles]) * int(message.content.split()[2])}EXP`]を配りました！",
                 colour=up
             )
-            await client.send_message(message.channel,embed=embed)
+            await client.send_message(client.get_channel("553028767702974464"),embed=embed)
             return
             
     if message.channel.id == "550941424065970176":
