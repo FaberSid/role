@@ -412,7 +412,7 @@ async def on_message(message):
                     page += 1
                 await client.delete_message(msg)
 
-        i = 0
+        i = 1
         member_data = []
         role = discord.utils.get(message.server.roles,name=message.content[4:])
         for member in message.server.members:
