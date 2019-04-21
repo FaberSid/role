@@ -497,7 +497,7 @@ async def on_message(message):
             while li:
                 yield li[:n]
                 li = li[n:]
-        page = 0
+        page = 1
         while True:
             for servers in slice(list(client.servers),500):
                 all_server = [f'{i}: `{server.name}`' for (i,server) in enumerate(servers,start=1)]
