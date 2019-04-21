@@ -410,7 +410,7 @@ async def on_message(message):
                     page -= 1
                 elif react.emoji == right:
                     page += 1
-                await client.delete_message(msg)
+                await client.edit_message(msg,embed=embed)
 
         i = 1
         member_data = []
@@ -464,7 +464,7 @@ async def on_message(message):
                     page -= 1
                 elif react.emoji == right:
                     page += 1
-                await client.delete_message(msg)
+                await client.edit_message(msg,embed=embed)
 
     if message.content == '役職一覧':
         page = 1
@@ -490,7 +490,7 @@ async def on_message(message):
                 page -= 1
             elif react.emoji == right:
                 page += 1
-            await client.delete_message(msg)
+            await client.edit_message(msg,embed=embed)
 
     if message.content == "全鯖一覧":
         def slice(li,n):
@@ -521,7 +521,7 @@ async def on_message(message):
                     page -= 1
                 elif react.emoji == right:
                     page += 1
-                await client.delete_message(msg)
+                await client.edit_message(msg,embed=embed)
                 
 
     if message.content == "バンリスト":
