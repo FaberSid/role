@@ -410,7 +410,7 @@ async def on_message(message):
                     page -= 1
                 elif react.emoji == right:
                     page += 1
-                await client.edit_message(msg,content=None,msg)
+                await client.edit_message(msg)
 
         i = 1
         member_data = []
