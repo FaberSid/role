@@ -378,29 +378,27 @@ async def on_message(message):
     if message.content.startswith("リスト"):
         async def send(member_data):
             page = 1
+            name = message.content[4:]
+            role = discord.utils.get(message.server.roles,name=message.content[4:])
+            if not role == None:
+                nick_name = f"『{name}』役職を持っているメンバー！！"
+            else:
+                nick_name = f"{message.author}さん\n『{name}』役職はこの鯖には存在しておりません..."
+            embed = discord.Embed(
+                title=nick_name,
+                description="".join(member_data[(page - 1) * 20:page * 20]),
+                timestamp=message.timestamp
+            )
+            embed.set_author(
+                name="メンバー詳細:"
+            )
+            embed.set_footer(
+                text="現在時刻:"
+            )
+            msg = await client.send_message(message.channel,embed=embed)
             while True:
-                up = discord.Color(random.randint(0,0xFFFFFF))
-                name = message.content[4:]
-                role = discord.utils.get(message.server.roles,name=message.content[4:])
-                if not role == None:
-                    nick_name = f"『{name}』役職を持っているメンバー！！"
-                else:
-                    nick_name = f"{message.author}さん\n『{name}』役職はこの鯖には存在しておりません..."
-                embed = discord.Embed(
-                    title=nick_name,
-                    description="".join(member_data[(page - 1) * 100:page * 100]),
-                    color=up,
-                    timestamp=message.timestamp
-                )
-                embed.set_author(
-                    name="メンバー詳細:"
-                )
-                embed.set_footer(
-                    text="現在時刻:"
-                )
-                msg = await client.send_message(message.channel,embed=embed)
                 l = page != 1
-                r = page < len(member_data) / 100
+                r = page < len(member_data) / 20
                 if l:
                     await client.add_reaction(msg,left)
                 if r:
@@ -410,7 +408,25 @@ async def on_message(message):
                     page -= 1
                 elif react.emoji == right:
                     page += 1
-                await client.edit_message(msg)
+                name = message.content[4:]
+                role = discord.utils.get(message.server.roles,name=message.content[4:])
+                if not role == None:
+                    nick_name = f"『{name}』役職を持っているメンバー！！"
+                else:
+                    nick_name = f"{message.author}さん\n『{name}』役職はこの鯖には存在しておりません..."
+                embed = discord.Embed(
+                    title=nick_name,
+                    description="".join(member_data[(page - 1) * 20:page * 20]),
+                    timestamp=message.timestamp
+                )
+                embed.set_author(
+                    name="メンバー詳細:"
+                )
+                embed.set_footer(
+                    text="現在時刻:"
+                )
+                await client.edit_message(msg,embed=embed)
+                await client.clear_reactions(msg)
 
         i = 1
         member_data = []
@@ -435,24 +451,24 @@ async def on_message(message):
                 li = li[n:]
 
         page = 1
-        while True:
-            for roles in slice(message.server.role_hierarchy,250):
-                role = [f'{i}: {role.mention}' for (i,role) in enumerate(roles,start=1)]
-                userembed = discord.Embed(
-                    title="役職一覧:",
-                    description="\n".join(role[(page - 1) * 50:page * 50]),
-                    color=discord.Color.light_grey()
-                )
-                userembed.set_thumbnail(
-                    url=message.server.icon_url
-                )
-                userembed.set_author(
-                    name=message.server.name + "の全役職情報:"
-                )
-                userembed.set_footer(
-                    text="この鯖の役職の合計の数は[{}]です！".format(str(len(message.server.roles)))
-                )
-                msg = await client.send_message(message.channel,embed=userembed)
+        for roles in slice(message.server.role_hierarchy,250):
+            role = [f'{i}: {role.mention}' for (i,role) in enumerate(roles,start=1)]
+            userembed = discord.Embed(
+                title="役職一覧:",
+                description="\n".join(role[(page - 1) * 50:page * 50]),
+                color=discord.Color.light_grey()
+            )
+            userembed.set_thumbnail(
+                url=message.server.icon_url
+            )
+            userembed.set_author(
+                name=message.server.name + "の全役職情報:"
+            )
+            userembed.set_footer(
+                text="この鯖の役職の合計の数は[{}]です！".format(str(len(message.server.roles)))
+            )
+            msg = await client.send_message(message.channel,embed=userembed)
+            while True:
                 l = page != 1
                 r = page < len(role) / 50
                 if l:
@@ -464,21 +480,38 @@ async def on_message(message):
                     page -= 1
                 elif react.emoji == right:
                     page += 1
-                await client.edit_message(msg,embed=embed)
+                for roles in slice(message.server.role_hierarchy,250):
+                    role = [f'{i}: {role.mention}' for (i,role) in enumerate(roles,start=1)]
+                    userembed = discord.Embed(
+                        title="役職一覧:",
+                        description="\n".join(role[(page - 1) * 50:page * 50]),
+                        color=discord.Color.light_grey()
+                    )
+                    userembed.set_thumbnail(
+                        url=message.server.icon_url
+                    )
+                    userembed.set_author(
+                        name=message.server.name + "の全役職情報:"
+                    )
+                    userembed.set_footer(
+                        text="この鯖の役職の合計の数は[{}]です！".format(str(len(message.server.roles)))
+                    )
+                    await client.edit_message(msg,embed=userembed)
+                    await client.clear_reactions(msg)
 
     if message.content == '役職一覧':
         page = 1
+        role = [r.mention for r in message.author.roles][::-1]
+        embed = discord.Embed(
+            title="**{}**に付与されてる役職一覧:".format(message.author),
+            description="\n".join(role[(page - 1) * 25:page * 25]),
+            color=discord.Color(random.randint(0,0xFFFFFF))
+        )
+        embed.set_thumbnail(
+            url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+        )
+        msg = await client.send_message(message.channel,embed=embed)
         while True:
-            role = [r.mention for r in message.author.roles][::-1]
-            embed = discord.Embed(
-                title="**{}**に付与されてる役職一覧:".format(message.author),
-                description="\n".join(role[(page - 1) * 25:page * 25]),
-                color=discord.Color(random.randint(0,0xFFFFFF))
-            )
-            embed.set_thumbnail(
-                url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
-            )
-            msg = await client.send_message(message.channel,embed=embed)
             l = page != 1
             r = page < len(role) / 25
             if l:
@@ -490,26 +523,37 @@ async def on_message(message):
                 page -= 1
             elif react.emoji == right:
                 page += 1
+            role = [r.mention for r in message.author.roles][::-1]
+            embed = discord.Embed(
+                title="**{}**に付与されてる役職一覧:".format(message.author),
+                description="\n".join(role[(page - 1) * 25:page * 25]),
+                color=discord.Color(random.randint(0,0xFFFFFF))
+            )
+            embed.set_thumbnail(
+                url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+            )
             await client.edit_message(msg,embed=embed)
+            await client.clear_reactions(msg)
 
     if message.content == "全鯖一覧":
         def slice(li,n):
             while li:
                 yield li[:n]
                 li = li[n:]
+
         page = 1
-        while True:
-            for servers in slice(list(client.servers),500):
-                all_server = [f'{i}: `{server.name}`' for (i,server) in enumerate(servers,start=1)]
-                embed = discord.Embed(
-                    title="全鯖一覧",
-                    description="\n".join(all_server[(page - 1) * 50:page * 50]),
-                    colour=discord.Color(random.randint(0,0xFFFFFF))
-                )
-                embed.set_footer(
-                    text="合計:{}鯖がこのBOTを導入しています！".format(len(client.servers))
-                )
-                msg = await client.send_message(message.channel,embed=embed)
+        for servers in slice(list(client.servers),500):
+            all_server = [f'{i}: `{server.name}`' for (i,server) in enumerate(servers,start=1)]
+            embed = discord.Embed(
+                title="全鯖一覧",
+                description="\n".join(all_server[(page - 1) * 50:page * 50]),
+                colour=discord.Color(random.randint(0,0xFFFFFF))
+            )
+            embed.set_footer(
+                text="合計:{}鯖がこのBOTを導入しています！".format(len(client.servers))
+            )
+            msg = await client.send_message(message.channel,embed=embed)
+            while True:
                 l = page != 1
                 r = page < len(all_server) / 50
                 if l:
@@ -521,7 +565,18 @@ async def on_message(message):
                     page -= 1
                 elif react.emoji == right:
                     page += 1
-                await client.edit_message(msg,embed=embed)
+                for servers in slice(list(client.servers),500):
+                    all_server = [f'{i}: `{server.name}`' for (i,server) in enumerate(servers,start=1)]
+                    embed = discord.Embed(
+                        title="全鯖一覧",
+                        description="\n".join(all_server[(page - 1) * 50:page * 50]),
+                        colour=discord.Color(random.randint(0,0xFFFFFF))
+                    )
+                    embed.set_footer(
+                        text="合計:{}鯖がこのBOTを導入しています！".format(len(client.servers))
+                    )
+                    await client.edit_message(msg,embed=embed)
+                    await client.clear_reactions(msg)
                 
 
     if message.content == "バンリスト":
