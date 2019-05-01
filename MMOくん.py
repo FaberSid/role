@@ -305,7 +305,7 @@ async def on_message(message):
 
         check_all = await client.wait_for_message(timeout=60,author=message.author,channel=message.channel,check=check)
         if check_all:
-            global message_counter,level,max_role
+            global message_counter
             message_counter += 1
             up = discord.Color(random.randint(0,0xFFFFFF))
             embed = discord.Embed(
