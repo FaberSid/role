@@ -5,6 +5,7 @@ import sys
 import psycopg2
 import random
 import signal
+import re
 
 from datetime import datetime
 from contextlib import closing
