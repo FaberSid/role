@@ -318,11 +318,17 @@ async def on_message(message):
         (間違えてレベル役職の範囲を設定してしまった場合とかに
         お使いいただけたらなと思っています。)
         
+        [`月島役職付与`]
+        月島が出現した際にメンションされる役職を
+        自動的に付与してくれるコマンドです！
+        
         ```役職更新ログというチャンネルを作成したら
         もし色んな人が役職を更新した際にその
-        チャンネルにログが残るようになります。
+        チャンネルにログが残るようになります。作ってみてね！```
         
-        作ってみてね！```
+        ```月島出現ログというチャンネルを作成したら
+        他のチャンネルで月島が出たときに月島情報が載るよ！
+        ついでにメンションも飛ぶから逃さなくても済む！```
         
         3ページ目/4ページ中""",
         f"""これらの機能は[**TAO公式鯖**](<https://discord.gg/d7Qqfhy>)に入りクランに参加\nして頂かないとほとんど意味が無いです。 \n\n[`クラン勢力図`]\n他のクランと自分のクランとの比較をしたり、\nメンバーの数を確認したり、総長などは誰なのかを把握出来ます。\n\n[`自クラン勢力図`]\n自分が入っているクランの具体的なメンバーや\n総長などを表示することが出来ます。\n\n[`除外 @メンション 理由`]\n注意:これは総長や副総長ではないと使用できないです。\n自分のクランで悪目立ちしている人や荒らしなどの権限を\n剥奪することが出来ます。理由を書かないと除外できません。\n\n4ページ目/4ページ中""",
@@ -651,6 +657,51 @@ async def on_message(message):
                                       "```『&taoか&TAO』 <text>\n\ntextに入力した内容をBotがSupport鯖へ送信します。(実行したコマンドは削除されます)```")
         finally:
             pass
+        
+    if len(message.embeds) != 0:
+        embed = message.embeds[0]
+        if embed.get("title"):
+            pattern = r'([0-9]+)'
+            try:
+                lists = re.findall(pattern,embed["title"])
+                if embed["title"] == f"【超激レア】月島が待ち構えている...!\nLv.{lists[0]} HP:{lists[1]}":
+                    role = discord.utils.get(message.server.roles,name="月島報告OK")
+                    channels = client.get_channel(message.channel.id)
+                    embed = discord.Embed(
+                        description=f"{channels.mention}で月島が出現しました！\n`[Lv.{int(lists[0])}]`の月島が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！",
+                        timestamp=message.timestamp
+                    )
+                    embed.set_thumbnail(
+                        url="https://media.discordapp.net/attachments/526274496894730241/566274379546099745/900bd3f186c08f128b846cf2823c7403.png"
+                    )
+                    embed.set_footer(
+                        text="出現時刻: "
+                    )
+                    if not role in message.server.roles:
+                        await client.create_role(message.author.server,name="月島報告OK",mentionable = True)
+                        await client.send_message(message.channel,"この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
+                        return
+                    else:
+                        for channel in message.server.channels:
+                            if channel.name == '月島出現ログ':
+                                await client.send_message(channel,embed=embed)
+                                await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
+                        return
+            except IndexError:
+                return
+
+    if message.content == "月島役職付与":
+        role = discord.utils.get(message.server.roles,name="月島報告OK")
+        if not role in message.server.roles:
+            await client.create_role(message.author.server,name="月島報告OK",mentionable=True)
+            await client.send_message(message.channel,"この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
+            await client.add_roles(message.author,role)
+            await client.send_message(message.channel,f"{role.name}役職を{message.author.mention}さんに付与いたしました。")
+            return
+        else:
+            await client.add_roles(message.author,role)
+            await client.send_message(message.channel,f"{role.name}役職を{message.author.mention}さんに付与いたしました。")
+            return
 
     # クラン関連
     # -------------------------------------------------------------------------------------------------------------------
