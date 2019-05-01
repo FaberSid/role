@@ -698,8 +698,6 @@ async def on_message(message):
         if not role in message.server.roles:
             await client.create_role(message.author.server,name="月島報告OK",mentionable=True)
             await client.send_message(message.channel,"この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
-            await client.add_roles(message.author,role)
-            await client.send_message(message.channel,f"{role.name}役職を{message.author.mention}さんに付与いたしました。")
             return
         else:
             await client.add_roles(message.author,role)
