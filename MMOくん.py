@@ -240,6 +240,8 @@ async def change_role():
 @client.event
 async def on_message(message):
     if len(message.embeds) != 0:
+        if not message.author.id == "526620171658330112":
+            return
         embed = message.embeds[0]
         if embed.get("title"):
             pattern = r'([0-9]+)'
