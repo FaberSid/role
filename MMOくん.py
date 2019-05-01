@@ -239,6 +239,38 @@ async def change_role():
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
+    if len(message.embeds) != 0:
+        embed = message.embeds[0]
+        if embed.get("title"):
+            pattern = r'([0-9]+)'
+            try:
+                lists = re.findall(pattern,embed["title"])
+                if embed["title"] == f"【超激レア】月島が待ち構えている...!\nLv.{lists[0]} HP:{lists[1]}":
+                    role = discord.utils.get(message.server.roles,name="月島報告OK")
+                    channels = client.get_channel(message.channel.id)
+                    embed = discord.Embed(
+                        description=f"{channels.mention}で月島が出現しました！\n`[Lv.{int(lists[0])}]`の月島が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！",
+                        timestamp=message.timestamp
+                    )
+                    embed.set_thumbnail(
+                        url="https://media.discordapp.net/attachments/526274496894730241/566274379546099745/900bd3f186c08f128b846cf2823c7403.png"
+                    )
+                    embed.set_footer(
+                        text="出現時刻: "
+                    )
+                    if not role in message.server.roles:
+                        await client.create_role(message.author.server,name="月島報告OK",mentionable = True)
+                        await client.send_message(message.channel,"この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
+                        return
+                    else:
+                        for channel in message.server.channels:
+                            if channel.name == '月島出現ログ':
+                                await client.send_message(channel,embed=embed)
+                                await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
+                        return
+            except IndexError:
+                return
+    
     if message.content.find("https://discord.gg/") != -1:
         if message.server.id == "337524390155780107":
             if not message.channel.id == "421954703509946368":
@@ -658,38 +690,7 @@ async def on_message(message):
                                       "```『&taoか&TAO』 <text>\n\ntextに入力した内容をBotがSupport鯖へ送信します。(実行したコマンドは削除されます)```")
         finally:
             pass
-        
-    if len(message.embeds) != 0:
-        embed = message.embeds[0]
-        if embed.get("title"):
-            pattern = r'([0-9]+)'
-            try:
-                lists = re.findall(pattern,embed["title"])
-                if embed["title"] == f"【超激レア】月島が待ち構えている...!\nLv.{lists[0]} HP:{lists[1]}":
-                    role = discord.utils.get(message.server.roles,name="月島報告OK")
-                    channels = client.get_channel(message.channel.id)
-                    embed = discord.Embed(
-                        description=f"{channels.mention}で月島が出現しました！\n`[Lv.{int(lists[0])}]`の月島が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！",
-                        timestamp=message.timestamp
-                    )
-                    embed.set_thumbnail(
-                        url="https://media.discordapp.net/attachments/526274496894730241/566274379546099745/900bd3f186c08f128b846cf2823c7403.png"
-                    )
-                    embed.set_footer(
-                        text="出現時刻: "
-                    )
-                    if not role in message.server.roles:
-                        await client.create_role(message.author.server,name="月島報告OK",mentionable = True)
-                        await client.send_message(message.channel,"この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
-                        return
-                    else:
-                        for channel in message.server.channels:
-                            if channel.name == '月島出現ログ':
-                                await client.send_message(channel,embed=embed)
-                                await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
-                        return
-            except IndexError:
-                return
+       
 
     if message.content == "月島役職付与":
         role = discord.utils.get(message.server.roles,name="月島報告OK")
