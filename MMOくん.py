@@ -696,7 +696,7 @@ async def on_message(message):
     if message.content == "月島役職付与":
         role = discord.utils.get(message.server.roles,name="月島報告OK")
         if not role in message.server.roles:
-            await client.create_role(message.author.server,name="月島報告OK",mentionable=True)
+            await client.create_role(message.server,name="月島報告OK",mentionable=True)
             await client.send_message(message.channel,"この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
             return
         else:
