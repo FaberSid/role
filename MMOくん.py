@@ -247,7 +247,7 @@ async def on_message(message):
             pattern = r'([0-9]+)'
             try:
                 lists = re.findall(pattern,embed["title"])
-                if embed["title"] == f"【超激レア】月島が待ち構えている...!\nLv.{lists[0]} HP:{lists[1]}":
+                if embed["title"] == f"【超激レア】月島が待ち構えている...！\nLv.{lists[0]} HP:{lists[1]}":
                     role = discord.utils.get(message.server.roles,name="月島報告OK")
                     channels = client.get_channel(message.channel.id)
                     embed = discord.Embed(
