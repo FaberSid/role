@@ -239,6 +239,25 @@ async def change_role():
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
+    if message.content == "::tinq":
+        async def send(member_data):
+            embed = discord.Embed(
+                title="月島ランキング(クラン戦)",
+                description=member_data
+            )
+            embed.set_thumbnail(
+                url="https://media.discordapp.net/attachments/526274496894730241/566274379546099745/900bd3f186c08f128b846cf2823c7403.png"
+            )
+            await client.send_message(message.channel,embed=embed)
+
+        i = 1
+        member_data = ""
+        for row in db_get_Tsukishima():
+            member_data += "{0}位:『{1}』[`合計:{2}体`]\n".format(i,client.get_channel(f"{int(row[0])}").name,int(row[1]))
+        else:
+            await send(member_data)
+            return
+        
     if len(message.embeds) != 0:
         embed = message.embeds[0]
         if embed.get("title"):
@@ -246,7 +265,6 @@ async def on_message(message):
             try:
                 lists = re.findall(pattern,embed["title"])
                 if embed["title"] == f"【超激レア】月島が待ち構えている...！\nLv.{lists[0]}  HP:{lists[1]}":
-                    role = discord.utils.get(message.server.roles,name="月島報告OK")
                     channels = client.get_channel(message.channel.id)
                     embed = discord.Embed(
                         description=f"{channels.mention}で月島が出現しました！\n`[Lv.{int(lists[0])}]`の月島が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！",
@@ -258,10 +276,54 @@ async def on_message(message):
                     embed.set_footer(
                         text="出現時刻: "
                     )
+                    role = discord.utils.get(message.server.roles,name="月島報告OK")
                     if not role in message.server.roles:
                         await client.create_role(message.author.server,name="月島報告OK",mentionable = True)
                         await client.send_message(message.channel,"この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
                         return
+                    if message.server.id == "337524390155780107":
+                        if db_write_tsukishima(int(message.channel.id)) == True:
+                            if message.channel.id == "551522986528866315":
+                                for channel in message.server.channels:
+                                    if channel.name == '月島出現ログ':
+                                        role1 = discord.utils.get(message.server.roles,name="境界線の彼方")
+                                        await client.send_message(channel,embed=embed)
+                                        await client.send_message(channel,f"{role1.mention}～月島出たらしいぜ！")
+                                        return
+                            elif message.channel.id == "551523261968810025":
+                                for channel in message.server.channels:
+                                    if channel.name == '月島出現ログ':
+                                        role2 = discord.utils.get(message.server.roles,name="輝く星の最果て")
+                                        await client.send_message(channel,embed=embed)
+                                        await client.send_message(channel,f"{role2.mention}～月島出たらしいぜ！")
+                                        return
+                            elif message.channel.id == "551523319879565332":
+                                for channel in message.server.channels:
+                                    if channel.name == '月島出現ログ':
+                                        role3 = discord.utils.get(message.server.roles,name="大地の根源と終末")
+                                        await client.send_message(channel,embed=embed)
+                                        await client.send_message(channel,f"{role3.mention}～月島出たらしいぜ！")
+                                        return
+                            elif message.channel.id == "551523441317117963":
+                                for channel in message.server.channels:
+                                    if channel.name == '月島出現ログ':
+                                        role4 = discord.utils.get(message.server.roles,name="休日のとある一日")
+                                        await client.send_message(channel,embed=embed)
+                                        await client.send_message(channel,f"{role4.mention}～月島出たらしいぜ！")
+                                        return
+                            elif message.channel.id == "550937847616765973":
+                                for channel in message.server.channels:
+                                    if channel.name == '月島出現ログ':
+                                        role5 = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
+                                        await client.send_message(channel,embed=embed)
+                                        await client.send_message(channel,f"{role5.mention}～月島出たらしいぜ！")
+                                        return
+                            else:
+                                for channel in message.server.channels:
+                                    if channel.name == '月島出現ログ':
+                                        await client.send_message(channel,embed=embed)
+                                        await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
+                                return
                     else:
                         for channel in message.server.channels:
                             if channel.name == '月島出現ログ':
@@ -1771,6 +1833,30 @@ def db_reset_role(author_id):
     c.close()
     con.close()
     return True
+       
+def db_write_tsukishima(server_id):
+    server_id = int(server_id)
+    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
+    c = con.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS tsukishima(channel_id Bigint);")
+    c.execute("INSERT INTO tsukishima(server_id) VALUES(%s);",(server_id,))
+    con.commit()
+    c.close()
+    con.close()
+    return True
+
+def db_get_tsukishima():
+    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
+    c = con.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS tsukishima(channel_id Bigint);")
+    c.execute("select channel_id, count(*) from tsukishima group by channel_id order by count(*) desc;")
+    ans = c.fetchall()
+    for row in ans:
+        yield (row[0],row[1])
+    else:
+        con.commit()
+        c.close()
+        con.close()
         
 client.loop.create_task(change_role())
 client.loop.create_task(change_status())
