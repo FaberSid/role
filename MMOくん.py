@@ -1838,8 +1838,8 @@ def db_write_tsukishima(server_id):
     server_id = int(server_id)
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS tsukishimaa(channel_id Bigint);")
-    c.execute("INSERT INTO tsukishimaa(channel_id) VALUES(%s);",(server_id,))
+    c.execute("CREATE TABLE IF NOT EXISTS tsukishimaaa(channel_id Bigint);")
+    c.execute("INSERT INTO tsukishimaaa(channel_id) VALUES(%s);",(server_id,))
     con.commit()
     c.close()
     con.close()
@@ -1848,8 +1848,8 @@ def db_write_tsukishima(server_id):
 def db_get_tsukishima():
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS tsukishimaa(channel_id Bigint);")
-    c.execute("select channel_id, count(*) from tsukishimaa group by channel_id order by count(*) desc;")
+    c.execute("CREATE TABLE IF NOT EXISTS tsukishimaaa(channel_id Bigint);")
+    c.execute("select channel_id, count(*) from tsukishimaaa group by channel_id order by count(*) desc;")
     ans = c.fetchall()
     for row in ans:
         yield (row[0],row[1])
