@@ -253,7 +253,7 @@ async def on_message(message):
         i = 1
         member_data = ""
         for row in db_get_tsukishima():
-            member_data += "{0}位:『{1}』[`合計:{2}体`]\n".format(i,[client.get_channel(f"{int(row[0])}").name][:-4],int(row[1]))
+            member_data += "{0}位:『{1}』[`合計:{2}体`]\n".format(i,client.get_channel(f"{int(row[0])}").name,int(row[1]))
         else:
             await send(member_data)
             return
