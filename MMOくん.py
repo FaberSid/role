@@ -239,6 +239,10 @@ async def change_role():
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
+    if message.content == "reset":
+        if db_reset_tsukishima() == True:
+            await client.send_message(message.channel,"ok")
+            return
     if message.content == "::tinq":
         async def send(member_data):
             embed = discord.Embed(
@@ -1839,7 +1843,7 @@ def db_write_tsukishima(server_id):
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
     c.execute("CREATE TABLE IF NOT EXISTS tsukishima(channel_id Bigint);")
-    c.execute("INSERT INTO tsukishima(server_id) VALUES(%s);",(server_id,))
+    c.execute("INSERT INTO tsukishima(channel_id) VALUES(%s);",(server_id,))
     con.commit()
     c.close()
     con.close()
@@ -1858,6 +1862,16 @@ def db_get_tsukishima():
         c.close()
         con.close()
         
+def db_reset_tsukishima():
+    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
+    c = con.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS tsukishima(channel_id Bigint);")
+    c.execute("delete from tsukishima;")
+    con.commit()
+    c.close()
+    con.close()
+    return True
+
 client.loop.create_task(change_role())
 client.loop.create_task(change_status())
 client.run(os.environ.get("TOKEN"))
