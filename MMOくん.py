@@ -239,10 +239,6 @@ async def change_role():
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
-    if message.content == "reset":
-        if db_reset_tsukishima() == True:
-            await client.send_message(message.channel,"ok")
-            return
     if message.content == "::tinq":
         async def send(member_data):
             embed = discord.Embed(
@@ -256,7 +252,7 @@ async def on_message(message):
 
         i = 1
         member_data = ""
-        for row in db_get_Tsukishima():
+        for row in db_get_tsukishima():
             member_data += "{0}位:『{1}』[`合計:{2}体`]\n".format(i,client.get_channel(f"{int(row[0])}").name,int(row[1]))
         else:
             await send(member_data)
@@ -1842,8 +1838,8 @@ def db_write_tsukishima(server_id):
     server_id = int(server_id)
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS tsukishima(channel_id Bigint);")
-    c.execute("INSERT INTO tsukishima(channel_id) VALUES(%s);",(server_id,))
+    c.execute("CREATE TABLE IF NOT EXISTS tsukishimaa(channel_id Bigint);")
+    c.execute("INSERT INTO tsukishimaa(channel_id) VALUES(%s);",(server_id,))
     con.commit()
     c.close()
     con.close()
@@ -1852,8 +1848,8 @@ def db_write_tsukishima(server_id):
 def db_get_tsukishima():
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS tsukishima(channel_id Bigint);")
-    c.execute("select channel_id, count(*) from tsukishima group by channel_id order by count(*) desc;")
+    c.execute("CREATE TABLE IF NOT EXISTS tsukishimaa(channel_id Bigint);")
+    c.execute("select channel_id, count(*) from tsukishimaa group by channel_id order by count(*) desc;")
     ans = c.fetchall()
     for row in ans:
         yield (row[0],row[1])
@@ -1861,16 +1857,6 @@ def db_get_tsukishima():
         con.commit()
         c.close()
         con.close()
-        
-def db_reset_tsukishima():
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
-    c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS tsukishima(channel_id Bigint);")
-    c.execute("delete from tsukishima;")
-    con.commit()
-    c.close()
-    con.close()
-    return True
 
 client.loop.create_task(change_role())
 client.loop.create_task(change_status())
