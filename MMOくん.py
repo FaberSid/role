@@ -282,6 +282,9 @@ async def on_message(message):
                         await client.send_message(message.channel,"この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
                         return
                     if message.server.id == "337524390155780107":
+                        channel_id = ["551522986528866315","551523261968810025","551523319879565332","551523441317117963","550937847616765973"]
+                        if not message.channel.id in channel_id:
+                            return
                         if db_write_tsukishima(int(message.channel.id)) == True:
                             if message.channel.id == "551522986528866315":
                                 for channel in message.server.channels:
