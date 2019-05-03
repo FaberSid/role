@@ -703,6 +703,14 @@ async def on_message(message):
             await client.add_roles(message.author,role)
             await client.send_message(message.channel,f"{role.name}役職を{message.author.mention}さんに付与いたしました。")
             return
+        
+    if message.content == "イベント管理参加":
+        if not message.server.id == "337524390155780107":
+            return
+        role = discord.utils.get(message.server.roles,name="イベント管理委員会")
+        await client.add_roles(message.author,role)
+        await client.send_message(message.channel,f"{role.name}役職を{message.author.mention}さんに付与いたしました。")
+        return
 
     # クラン関連
     # -------------------------------------------------------------------------------------------------------------------
