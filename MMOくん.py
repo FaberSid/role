@@ -217,7 +217,6 @@ async def on_member_remove(member):
     else:
         return
 
-
 # -------------------------------------------------------------------------------------------------------------------
 async def change_status():
     await client.wait_until_ready()
@@ -266,8 +265,9 @@ async def on_message(message):
                 lists = re.findall(pattern,embed["title"])
                 if embed["title"] == f"【超激レア】月島が待ち構えている...！\nLv.{lists[0]}  HP:{lists[1]}":
                     channels = client.get_channel(message.channel.id)
+                    url = f"https://discordapp.com/channels/{int(message.server.id)}/{int(message.channel.id)}/{int(message.content.id)}"
                     embed = discord.Embed(
-                        description=f"""{channels.mention}で月島が出現しました！\n`[Lv.{int(lists[0])}]`の月島が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！\n\n\nhttps://discordapp.com/channels/{int(message.server.id)}/{int(message.channel.id)}/{int(message.content.id)}""",
+                        description=f"""{channels.mention}で月島が出現しました！\n`[Lv.{int(lists[0])}]`の月島が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！\n\n{url}",
                         timestamp=message.timestamp
                     )
                     embed.set_thumbnail(
