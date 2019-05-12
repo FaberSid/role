@@ -267,7 +267,7 @@ async def on_message(message):
                     channels = client.get_channel(message.channel.id)
                     url = f"https://discordapp.com/channels/{int(message.server.id)}/{int(message.channel.id)}/{int(message.content.id)}"
                     embed = discord.Embed(
-                        description=f"""{channels.mention}で月島が出現しました！\n`[Lv.{int(lists[0])}]`の月島が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！\n\n{url}",
+                        description=f"""{channels.mention}で月島が出現しました！\n`[Lv.{int(lists[0])}]`の月島が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！\n\n{url}""",
                         timestamp=message.timestamp
                     )
                     embed.set_thumbnail(
