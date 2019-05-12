@@ -285,48 +285,49 @@ async def on_message(message):
                         channel_id = ["551522986528866315","551523261968810025","551523319879565332","551523441317117963","550937847616765973"]
                         if not message.channel.id in channel_id:
                             return
-                        if db_write_tsukishima(int(message.channel.id)) == True:
-                            if message.channel.id == "551522986528866315":
-                                for channel in message.server.channels:
-                                    if channel.name == '月島出現ログ':
-                                        role1 = discord.utils.get(message.server.roles,name="境界線の彼方")
-                                        await client.send_message(channel,embed=embed)
-                                        await client.send_message(channel,f"{role1.mention}～月島出たらしいぜ！")
-                                        return
-                            elif message.channel.id == "551523261968810025":
-                                for channel in message.server.channels:
-                                    if channel.name == '月島出現ログ':
-                                        role2 = discord.utils.get(message.server.roles,name="輝く星の最果て")
-                                        await client.send_message(channel,embed=embed)
-                                        await client.send_message(channel,f"{role2.mention}～月島出たらしいぜ！")
-                                        return
-                            elif message.channel.id == "551523319879565332":
-                                for channel in message.server.channels:
-                                    if channel.name == '月島出現ログ':
-                                        role3 = discord.utils.get(message.server.roles,name="大地の根源と終末")
-                                        await client.send_message(channel,embed=embed)
-                                        await client.send_message(channel,f"{role3.mention}～月島出たらしいぜ！")
-                                        return
-                            elif message.channel.id == "551523441317117963":
-                                for channel in message.server.channels:
-                                    if channel.name == '月島出現ログ':
-                                        role4 = discord.utils.get(message.server.roles,name="休日のとある一日")
-                                        await client.send_message(channel,embed=embed)
-                                        await client.send_message(channel,f"{role4.mention}～月島出たらしいぜ！")
-                                        return
-                            elif message.channel.id == "550937847616765973":
-                                for channel in message.server.channels:
-                                    if channel.name == '月島出現ログ':
-                                        role5 = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
-                                        await client.send_message(channel,embed=embed)
-                                        await client.send_message(channel,f"{role5.mention}～月島出たらしいぜ！")
-                                        return
-                            else:
-                                for channel in message.server.channels:
-                                    if channel.name == '月島出現ログ':
-                                        await client.send_message(channel,embed=embed)
-                                        await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
-                                return
+                        else:
+                            if db_write_tsukishima(int(message.channel.id)) == True:
+                                if message.channel.id == "551522986528866315":
+                                    for channel in message.server.channels:
+                                        if channel.name == '月島出現ログ':
+                                            role1 = discord.utils.get(message.server.roles,name="境界線の彼方")
+                                            await client.send_message(channel,embed=embed)
+                                            await client.send_message(channel,f"{role1.mention}～月島出たらしいぜ！")
+                                            return
+                                elif message.channel.id == "551523261968810025":
+                                    for channel in message.server.channels:
+                                        if channel.name == '月島出現ログ':
+                                            role2 = discord.utils.get(message.server.roles,name="輝く星の最果て")
+                                            await client.send_message(channel,embed=embed)
+                                            await client.send_message(channel,f"{role2.mention}～月島出たらしいぜ！")
+                                            return
+                                elif message.channel.id == "551523319879565332":
+                                    for channel in message.server.channels:
+                                        if channel.name == '月島出現ログ':
+                                            role3 = discord.utils.get(message.server.roles,name="大地の根源と終末")
+                                            await client.send_message(channel,embed=embed)
+                                            await client.send_message(channel,f"{role3.mention}～月島出たらしいぜ！")
+                                            return
+                                elif message.channel.id == "551523441317117963":
+                                    for channel in message.server.channels:
+                                        if channel.name == '月島出現ログ':
+                                            role4 = discord.utils.get(message.server.roles,name="休日のとある一日")
+                                            await client.send_message(channel,embed=embed)
+                                            await client.send_message(channel,f"{role4.mention}～月島出たらしいぜ！")
+                                            return
+                                elif message.channel.id == "550937847616765973":
+                                    for channel in message.server.channels:
+                                        if channel.name == '月島出現ログ':
+                                            role5 = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
+                                            await client.send_message(channel,embed=embed)
+                                            await client.send_message(channel,f"{role5.mention}～月島出たらしいぜ！")
+                                            return
+                                else:
+                                    for channel in message.server.channels:
+                                        if channel.name == '月島出現ログ':
+                                            await client.send_message(channel,embed=embed)
+                                            await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
+                                    return
                     else:
                         for channel in message.server.channels:
                             if channel.name == '月島出現ログ':
