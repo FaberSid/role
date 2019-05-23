@@ -1523,7 +1523,7 @@ async def on_message(message):
             reply = ""
             for row in db_read(message.server.id):
                 print(row)
-                if i % 30 == 0:
+                if i % 50 == 0:
                     if i > 0:
                         embed = discord.Embed(
                             description=reply,
@@ -1538,7 +1538,7 @@ async def on_message(message):
                     reply += "`[{}]: Lv{}~{}:『{}』`\n".format(i + 1,row[0],row[1],discord.utils.get(
                         message.server.roles,id=str(row[2])).name)
                 i += 1
-            if i % 30 >= 0 or i <= 30:
+            if i % 50 >= 0 or i <= 50:
                 embed = discord.Embed(
                     description=reply,
                 )
