@@ -1283,9 +1283,8 @@ async def on_message(message):
                     await asyncio.sleep(10)
                     await client.delete_message(message)
                     return
-
+                
             await client.delete_message(message)
-
             if message.content.startswith("称号作成 "):
                 if message.author.id == "304932786286886912":
                     ans = db_create(
