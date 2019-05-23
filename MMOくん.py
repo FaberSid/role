@@ -1525,16 +1525,10 @@ async def on_message(message):
                 if i % 50 == 0:
                     if i > 0:
                         embed = discord.Embed(
-                            title="",
                             description=reply,
-                            color=discord.Color(random.randint(0,0xFFFFFF))
                         )
                         embed.set_author(
                             name="現在の役職リストはこちらです。",
-                            url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(client.user)
-                        )
-                        embed.set_footer(
-                            text=f"発言者:{message.author.name}さん"
                         )
                         await client.send_message(message.channel,embed=embed)
                     reply = "`[{}]: Lv{}~{}:『{}』`\n".format(i + 1,row[0],row[1],discord.utils.get(
@@ -1545,18 +1539,10 @@ async def on_message(message):
                 i += 1
             if i % 50 >= 0 or i <= 50:
                 embed = discord.Embed(
-                    title="",
                     description=reply,
-                    color=discord.Color(random.randint(0,0xFFFFFF))
                 )
                 embed.set_author(
                     name="現在の役職リストはこちらです。"
-                )
-                embed.set_footer(
-                    text=f"発言者:{message.author.name}さん"
-                )
-                embed.set_thumbnail(
-                    url=message.server.icon_url
                 )
                 await client.send_message(message.channel,embed=embed)
 
