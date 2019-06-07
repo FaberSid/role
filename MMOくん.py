@@ -369,7 +369,7 @@ async def on_message(message):
 
         check_all = await client.wait_for_message(timeout=60,author=message.author,channel=message.channel,check=check)
         if check_all:
-            global message_counter
+            global message_counter,levels,sentou,items,to_next_level,prank,exp,hp,atk
             message_counter += 1
             up = discord.Color(random.randint(0,0xFFFFFF))
             embed = discord.Embed(
@@ -1181,7 +1181,7 @@ async def on_message(message):
 
                         {role2.mention}: {count2}名
                         総長:<@376728551904247808>さん | 副総長:<@434340186898563073>さん
-
+                        
                         {role3.mention}: {count3}名
                         総長:<@460208854362357770>さん | 副総長:<@507161988682743818>さん
 
@@ -1211,7 +1211,45 @@ async def on_message(message):
         if message.author == client.user:
             return
         if message.author.bot:
-            return
+            if len(message.embeds) != 0:
+                embed = message.embeds[0]
+                if embed.get("author") and embed["author"].get("name"):
+                    if embed["author"]["name"][-7:] != "のステータス:":
+                        return
+                    url = embed["thumbnail"]["url"]
+                    authors = embed["author"]["name"][:-7]
+                    for f in embed["fields"]:
+                        if f["name"] == "Lv":
+                            levels = str(f["value"])
+                        if f["name"] == "HP":
+                            hp = str(f["value"])
+                        if f["name"] == "ATK":
+                            atk = str(f["value"])
+                        if f["name"] == "EXP":
+                            exp = str(f["value"])
+                        if f["name"] == "次のLvまで":
+                            to_next_level = str(f["value"])
+                        if f["name"] == "プレイヤーランク":
+                            prank = str(f["value"])
+                        if f["name"] == "所持アイテム":
+                            items = str(f["value"])
+                        if f["name"] == "戦闘状況:":
+                            sentou = str(f["value"])
+                    embed = discord.Embed()
+                    embed.set_author(name="{}のステータス:".format(authors),)
+                    embed.add_field(name="Lv",value=levels)
+                    embed.add_field(name="HP",value=hp)
+                    embed.add_field(name="ATK",value=atk)
+                    embed.add_field(name="EXP",value=exp)
+                    embed.add_field(name="次のLvまで",value=to_next_level)
+                    embed.add_field(name="プレイヤーランク",value=prank)
+                    embed.add_field(name="所持アイテム",value=items)
+                    embed.set_thumbnail(url=url)
+                    embed.add_field(name="戦闘状況:",value=sentou)
+                    await asyncio.sleep(5)
+                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                           c.name == 'tao-global'))
+                    return
         if db_get_message(int(message.author.id)) == True:
             await client.delete_message(message)
             return
