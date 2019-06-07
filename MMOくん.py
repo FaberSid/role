@@ -1249,6 +1249,8 @@ async def on_message(message):
                     await asyncio.sleep(5)
                     await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
                                            c.name == 'tao-global'))
+                    await asyncio.sleep(3)
+                    await client.delete_message(message)
                     return
         if db_get_message(int(message.author.id)) == True:
             await client.delete_message(message)
