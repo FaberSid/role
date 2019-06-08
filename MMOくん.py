@@ -1211,6 +1211,8 @@ async def on_message(message):
         if message.author == client.user:
             return
         if message.author.bot:
+            if not message.author.id == "550248294551650305":
+                return
             if len(message.embeds) != 0:
                 embed = message.embeds[0]
                 if embed.get("author") and embed["author"].get("name"):
