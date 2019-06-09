@@ -238,6 +238,28 @@ async def change_role():
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
+    if message.content == "月島イベント役職付与":
+        if not message.channel.id == "535957520666066954":
+            channel = client.get_channel('535957520666066954')
+            await client.delete_message(message)
+            await client.send_message(message.channel,"このコマンドは{}でしか使うことが出来ません".format(channel.mention))
+            return
+        role = discord.utils.get(message.server.roles,name="経験値配布イベント用")
+        if role in message.author.roles:
+            up = discord.Color(random.randint(0,0xFFFFFF))
+            embed = discord.Embed(
+                description=f"{message.author.mention}さん\nあなたはもう既にこの役職を持っています！！",
+                color=up
+            )
+            embed.set_thumbnail(
+                url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+            )
+            await client.send_message(message.channel,embed=embed)
+        else:
+            await client.add_roles(message.author,role)
+            await client.send_message(message.channel,"{0}さんに『{1}』役職を付与しました。".format(message.author.mention,role))
+            return
+        
     if message.content == "::tinq":
         async def send(member_data):
             embed = discord.Embed(
@@ -284,6 +306,10 @@ async def on_message(message):
                     if message.server.id == "337524390155780107":
                         channel_id = ["551522986528866315","551523261968810025","551523319879565332","551523441317117963","550937847616765973"]
                         if not message.channel.id in channel_id:
+                            for channel in message.server.channels:
+                                if channel.name == '月島出現ログ':
+                                    await client.send_message(channel,embed=embed)
+                                    await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
                             return
                         else:
                             if db_write_tsukishima(int(message.channel.id)) == True:
@@ -322,12 +348,6 @@ async def on_message(message):
                                             await client.send_message(channel,embed=embed)
                                             await client.send_message(channel,f"{role5.mention}～月島出たらしいぜ！")
                                             return
-                                else:
-                                    for channel in message.server.channels:
-                                        if channel.name == '月島出現ログ':
-                                            await client.send_message(channel,embed=embed)
-                                            await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
-                                    return
                     else:
                         for channel in message.server.channels:
                             if channel.name == '月島出現ログ':
@@ -1211,7 +1231,7 @@ async def on_message(message):
         if message.author == client.user:
             return
         if message.author.bot:
-            if not message.author.id == "550248294551650305":
+            if not message.author.id == "526620171658330112":
                 return
             if len(message.embeds) != 0:
                 embed = message.embeds[0]
