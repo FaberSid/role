@@ -238,12 +238,7 @@ async def change_role():
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
-    if message.content == "月島イベント役職付与":
-        if not message.channel.id == "535957520666066954":
-            channel = client.get_channel('535957520666066954')
-            await client.delete_message(message)
-            await client.send_message(message.channel,"このコマンドは{}でしか使うことが出来ません".format(channel.mention))
-            return
+    if message.content == "経験値わっしょい":
         role = discord.utils.get(message.server.roles,name="経験値配布イベント用")
         if role in message.author.roles:
             up = discord.Color(random.randint(0,0xFFFFFF))
