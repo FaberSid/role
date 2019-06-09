@@ -238,23 +238,6 @@ async def change_role():
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
-    if message.content == "経験値わっしょい":
-        role = discord.utils.get(message.server.roles,name="経験値配布イベント用")
-        if role in message.author.roles:
-            up = discord.Color(random.randint(0,0xFFFFFF))
-            embed = discord.Embed(
-                description=f"{message.author.mention}さん\nあなたはもう既にこの役職を持っています！！",
-                color=up
-            )
-            embed.set_thumbnail(
-                url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
-            )
-            await client.send_message(message.channel,embed=embed)
-        else:
-            await client.add_roles(message.author,role)
-            await client.send_message(message.channel,"{0}さんに『{1}』役職を付与しました。".format(message.author.mention,role))
-            return
-        
     if message.content == "::tinq":
         async def send(member_data):
             embed = discord.Embed(
