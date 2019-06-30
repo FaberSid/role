@@ -1252,6 +1252,36 @@ async def on_message(message):
                     await asyncio.sleep(3)
                     await client.delete_message(message)
                     return
+            if len(message.embeds) != 0:
+                embed = message.embeds[0]
+                if embed.get("author") and embed["author"].get("name"):
+                    if embed["author"]["name"][-11:] != "のペットのステータス:":
+                        return
+                    url = embed["thumbnail"]["url"]
+                    authors = embed["author"]["name"][:-11]
+                    for f in embed["fields"]:
+                        if f["name"] == "PETの名前:":
+                            name = str(f["value"])
+                        if f["name"] == "Lv":
+                            levels = str(f["value"])
+                        if f["name"] == "ATK":
+                            hp = str(f["value"])
+                        if f["name"] == "攻撃確率":
+                            exp = str(f["value"])
+                    embed = discord.Embed()
+                    embed.set_author(name="{}のステータス:".format(authors),)
+                    embed.add_field(name="PETの名前:",value=name)
+                    embed.add_field(name="Lv",value=levels)
+                    embed.add_field(name="ATK",value=atk)
+                    embed.add_field(name="攻撃確率",value=exp)
+                    embed.set_thumbnail(url=url)
+                    embed.add_field(name="戦闘状況:",value=sentou)
+                    await asyncio.sleep(5)
+                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                           c.name == 'tao-global'))
+                    await asyncio.sleep(3)
+                    await client.delete_message(message)
+                    return
         if db_get_message(int(message.author.id)) == True:
             await client.delete_message(message)
             return
