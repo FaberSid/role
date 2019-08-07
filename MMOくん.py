@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------
 import os
 import asyncio
 import sys
@@ -29,7 +29,6 @@ message_counter = 0
 left = '⏪'
 right = '⏩'
 
-
 def predicate(message,l,r):
     def check(reaction,user):
         if reaction.message.id != message.id or user == client.user:
@@ -39,14 +38,7 @@ def predicate(message,l,r):
         if r and reaction.emoji == right:
             return True
         return False
-
     return check
-
-
-# -------------------------------------------------------------------------------------------------------------------
-@client.event
-async def on_ready():
-    print("起動完了じゃああああああああああああああああああああ")
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -175,7 +167,7 @@ async def on_member_join(member):
         len([member for member in member.server.members if not member.bot])))
     await client.edit_channel(client.get_channel("537227343844868096"),
                               name="ボットの数: {}".format(len([member for member in member.server.members if member.bot])))
-    
+
     for row in db_join_member(int(member.id)):
         if int(row[0]) == int(member.id):
             role = discord.utils.get(member.server.roles,name=str(row[1]))
@@ -207,15 +199,16 @@ async def on_member_remove(member):
         len([member for member in member.server.members if not member.bot])))
     await client.edit_channel(client.get_channel("537227343844868096"),
                               name="ボットの数: {}".format(len([member for member in member.server.members if member.bot])))
-    
+
     for role in member.roles:
         ans = db_get_role(
             int(member.id),
             role.name)
         if ans == True:
-            print("ok")
+           pass 
     else:
         return
+
 
 # -------------------------------------------------------------------------------------------------------------------
 async def change_status():
@@ -225,6 +218,7 @@ async def change_status():
         await client.change_presence(game=discord.Game(name="&helpしてね！"))
         await asyncio.sleep(30)
 
+
 async def change_role():
     await client.wait_until_ready()
 
@@ -232,31 +226,14 @@ async def change_role():
         server = client.get_server('337524390155780107')
         for role in server.roles:
             if role.id == '562512114166792192':
-                up =discord.Color(random.randint(0,0xFFFFFF))
+                up = discord.Color(random.randint(0,0xFFFFFF))
                 await client.edit_role(server=server,role=role,colour=up)
                 await asyncio.sleep(10)
+
+
 # -------------------------------------------------------------------------------------------------------------------
 @client.event
 async def on_message(message):
-    if message.content == "::tinq":
-        async def send(member_data):
-            embed = discord.Embed(
-                title="月島ランキング(クラン戦)",
-                description=member_data
-            )
-            embed.set_thumbnail(
-                url="https://media.discordapp.net/attachments/526274496894730241/566274379546099745/900bd3f186c08f128b846cf2823c7403.png"
-            )
-            await client.send_message(message.channel,embed=embed)
-
-        i = 1
-        member_data = ""
-        for row in db_get_tsukishima():
-            member_data += "{0}位:『{1}』[`合計:{2}体`]\n".format(i,client.get_channel(f"{int(row[0])}").name,int(row[1]))
-        else:
-            await send(member_data)
-            return
-        
     if len(message.embeds) != 0:
         embed = message.embeds[0]
         if embed.get("title"):
@@ -278,64 +255,17 @@ async def on_message(message):
                     )
                     role = discord.utils.get(message.server.roles,name="月島報告OK")
                     if not role in message.server.roles:
-                        await client.create_role(message.author.server,name="月島報告OK",mentionable = True)
+                        await client.create_role(message.author.server,name="月島報告OK",mentionable=True)
                         await client.send_message(message.channel,"この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
-                        return
-                    if message.server.id == "337524390155780107":
-                        channel_id = ["551522986528866315","551523261968810025","551523319879565332","551523441317117963","550937847616765973"]
-                        if not message.channel.id in channel_id:
-                            for channel in message.server.channels:
-                                if channel.name == '月島出現ログ':
-                                    await client.send_message(channel,embed=embed)
-                                    await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
+                    for channel in message.server.channels:
+                        if channel.name == '月島出現ログ':
+                            await client.send_message(channel,embed=embed)
+                            await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
                             return
-                        else:
-                            if db_write_tsukishima(int(message.channel.id)) == True:
-                                if message.channel.id == "551522986528866315":
-                                    for channel in message.server.channels:
-                                        if channel.name == '月島出現ログ':
-                                            role1 = discord.utils.get(message.server.roles,name="境界線の彼方")
-                                            await client.send_message(channel,embed=embed)
-                                            await client.send_message(channel,f"{role1.mention}～月島出たらしいぜ！")
-                                            return
-                                elif message.channel.id == "551523261968810025":
-                                    for channel in message.server.channels:
-                                        if channel.name == '月島出現ログ':
-                                            role2 = discord.utils.get(message.server.roles,name="輝く星の最果て")
-                                            await client.send_message(channel,embed=embed)
-                                            await client.send_message(channel,f"{role2.mention}～月島出たらしいぜ！")
-                                            return
-                                elif message.channel.id == "551523319879565332":
-                                    for channel in message.server.channels:
-                                        if channel.name == '月島出現ログ':
-                                            role3 = discord.utils.get(message.server.roles,name="大地の根源と終末")
-                                            await client.send_message(channel,embed=embed)
-                                            await client.send_message(channel,f"{role3.mention}～月島出たらしいぜ！")
-                                            return
-                                elif message.channel.id == "551523441317117963":
-                                    for channel in message.server.channels:
-                                        if channel.name == '月島出現ログ':
-                                            role4 = discord.utils.get(message.server.roles,name="休日のとある一日")
-                                            await client.send_message(channel,embed=embed)
-                                            await client.send_message(channel,f"{role4.mention}～月島出たらしいぜ！")
-                                            return
-                                elif message.channel.id == "550937847616765973":
-                                    for channel in message.server.channels:
-                                        if channel.name == '月島出現ログ':
-                                            role5 = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
-                                            await client.send_message(channel,embed=embed)
-                                            await client.send_message(channel,f"{role5.mention}～月島出たらしいぜ！")
-                                            return
-                    else:
-                        for channel in message.server.channels:
-                            if channel.name == '月島出現ログ':
-                                await client.send_message(channel,embed=embed)
-                                await client.send_message(channel,f"{role.mention}～月島出たらしいぜ！")
-                        return
             except IndexError:
                 return
-    
-    if message.content.find("https://discord.gg/") != -1:
+
+    if message.content.find("discord.gg/") != -1:
         if message.server.id == "337524390155780107":
             if not message.channel.id == "421954703509946368":
                 if not message.channel.name == "mmo-global-chat":
@@ -350,84 +280,44 @@ async def on_message(message):
                     )
                     await client.send_message(message.channel,embed=embed)
                     return
-                
-    if message.content.startswith("作品名"):
-        if not message.channel.id == "555311552971014153":
-            await client.send_message(message.channel,f"{message.author.mention}さん\nこのチャンネルでは申請できません。")
-            return
-        if message.author.id == client.user.id:
-            return
-        await client.delete_message(message)
-        icon_name = message.content.split()[1]
-        get = await client.send_message(message.channel,
-                                        f"作品名:『{icon_name}』を承認しました。\n今から60秒間受付を開始致します。\nこのチャンネルで応募の画像を貼ってください。")
-
-        def check(message):
-            return message.attachments
-
-        check_all = await client.wait_for_message(timeout=60,author=message.author,channel=message.channel,check=check)
-        if check_all:
-            global message_counter,levels,sentou,items,to_next_level,prank,exp,hp,atk
-            message_counter += 1
-            up = discord.Color(random.randint(0,0xFFFFFF))
-            embed = discord.Embed(
-                title=f"{message.author.name}さんの作品です。",
-                description=f"作品名:『{icon_name}』",
-                color=up
-            )
-            embed.set_image(
-                url=check_all.attachments[0]['url']
-            )
-            embed.set_author(
-                name=f"作品番号: [{str(message_counter)}]"
-            )
-            reaction = await client.send_message(client.get_channel("555306778473267220"),embed=embed)
-            await client.add_reaction(reaction,'👍')
-            await client.add_reaction(reaction,"👎")
-            await client.delete_message(get)
-            return
-        if check_all is None:
-            await client.send_message(message.channel,"この作品の受け付けはキャンセルされました...\nまた出品よろしくお願いします！")
-            await client.delete_message(get)
-            return
 
     help_message = [
         f"""[**このBOTの招待**](<https://discordapp.com/oauth2/authorize?client_id=550248294551650305&permissions=8&scope=bot>)\n何かがおかしい...。あれ...？なんで動かないの？\nと思ったら<@304932786286886912>にお申し付けください。\n\n[`1ページ目`]\nこのメッセージを表示。\n\n[`2ページ目`]\nこのBOTのコマンドの機能を表示。\n\n[`3ページ目`]\nTAOと連動するための設定方法を表示！\n\n[`4ページ目`]\nTAO公式鯖でのクランの機能説明。\n\n```このBOTは\n管理者:The.First.Step#3454\n副管理者:FaberSid#2459さん\n副管理者:midorist#5677さん\nの3人で制作しました！```\n\n1ページ目/4ページ中""",
         f"""[`リスト 役職名`]\nリスト　役職名でその役職が何人に\n付与されているのかを表示します。\n\n[`全役職一覧`]\nメッセージが送信された鯖でのすべての役職を\n埋め込みメッセージで送信します。\n\n[`役職一覧`]\n自分が付与されている役職を\n埋め込みメッセージで送信します。\n\n[`全鯖一覧`]\nこのBOTを導入している鯖を全て表示します。\n\n[`バンリスト`]\nその鯖でBANされている人たちを表示します。\n\n[`&taoか&TAO <内容>`]\nこれをしたらTAO鯖に直してほしいところや\nTAOが落ちているということを伝えれます！\n\n2ページ目/4ページ中""",
         f"""
         注意:これらのレベル設定コマンドは管理者権限が
-        
+
         [`&level lower upper 役職名`]
         これでそのレベルが何処からどこまでの範囲で
         対応したいのかを設定することが出来ます！
-        
+
         `[例: &level 1 10 aaa]`
         これで自分のTAOでのレベルが1~10の時に
         『aaa』という役職が付与されるようになりました。
-        
+
         [`&list`]
         これで今設定されているレベル役職の全てを
         表示することが出来ます。
-        
+
         [`&reset`]
         今のところ設定されているレベル役職の範囲を
         全てリセットいたします。
-        
+
         (間違えてレベル役職の範囲を設定してしまった場合とかに
         お使いいただけたらなと思っています。)
-        
+
         [`月島役職付与`]
         月島が出現した際にメンションされる役職を
         自動的に付与してくれるコマンドです！
-        
+
         ```役職更新ログというチャンネルを作成したら
         もし色んな人が役職を更新した際にその
         チャンネルにログが残るようになります。作ってみてね！```
-        
+
         ```月島出現ログというチャンネルを作成したら
         他のチャンネルで月島が出たときに月島情報が載るよ！
         ついでにメンションも飛ぶから逃さなくても済む！```
-        
+
         3ページ目/4ページ中""",
         f"""これらの機能は[**TAO公式鯖**](<https://discord.gg/d7Qqfhy>)に入りクランに参加\nして頂かないとほとんど意味が無いです。 \n\n[`クラン勢力図`]\n他のクランと自分のクランとの比較をしたり、\nメンバーの数を確認したり、総長などは誰なのかを把握出来ます。\n\n[`自クラン勢力図`]\n自分が入っているクランの具体的なメンバーや\n総長などを表示することが出来ます。\n\n[`除外 @メンション 理由`]\n注意:これは総長や副総長ではないと使用できないです。\n自分のクランで悪目立ちしている人や荒らしなどの権限を\n剥奪することが出来ます。理由を書かないと除外できません。\n\n4ページ目/4ページ中""",
     ]
@@ -681,7 +571,6 @@ async def on_message(message):
                     )
                     await client.edit_message(msg,embed=embed)
                     await client.clear_reactions(msg)
-                
 
     if message.content == "バンリスト":
         bannedUsers = await client.get_bans(message.server)
@@ -700,7 +589,7 @@ async def on_message(message):
         await client.send_message(message.channel,embed=embed)
         return
 
-    if datetime.now().strftime("%H:%M:%S") == datetime.now().strftime("12:00:00") or message.content == "&get":
+    if message.content == "&get":
         await client.delete_message(message)
         counter = 0
         channel_name = client.get_channel("550674420222394378")
@@ -710,15 +599,15 @@ async def on_message(message):
                     counter += 1
             await client.edit_channel(channel_name,name="総メッセージ数: {}".format(counter))
         return
-    
+
     if message.content.startswith('&TAO') or message.content.startswith("&tao"):
         sayd = message.content[5:]
         if sayd == "":
             await client.send_message(message.channel,
                                       "```『&taoか&TAO』 <text>\n\ntextに入力した内容をBotがSupport鯖へ送信します。(実行したコマンドは削除されます)```")
-            return 
+            return
         try:
-            embed=discord.Embed(
+            embed = discord.Embed(
                 description="・発言者:" + message.author.name + "\n・送り先:" + message.server.name,
                 color=discord.Color.dark_grey(),
                 timestamp=message.timestamp
@@ -729,7 +618,7 @@ async def on_message(message):
             embed.add_field(
                 name="**サポートしてほしい内容:**",
                 value=f"```{sayd}```"
-           )
+            )
             embed.set_footer(
                 text="発言時刻: "
             )
@@ -738,24 +627,23 @@ async def on_message(message):
                 icon_url=client.user.avatar_url,
             )
             await client.delete_message(message)
-            await client.send_message(client.get_channel('559986180859625483'), embed=embed)
-            remembed=discord.Embed(
+            await client.send_message(client.get_channel('559986180859625483'),embed=embed)
+            remembed = discord.Embed(
                 title="報告した内容:",
                 description=f"""
                 ```{sayd}```
-                
+
                 ご協力ありがとうございます。
                 このメッセージはTAOを管理してる鯖に送られました。
                 """,
                 color=discord.Color.dark_grey()
             )
-            await client.send_message(message.channel, embed=remembed)
+            await client.send_message(message.channel,embed=remembed)
         except IndexError:
             await client.send_message(message.channel,
                                       "```『&taoか&TAO』 <text>\n\ntextに入力した内容をBotがSupport鯖へ送信します。(実行したコマンドは削除されます)```")
         finally:
             pass
-       
 
     if message.content == "月島役職付与":
         role = discord.utils.get(message.server.roles,name="月島報告OK")
@@ -767,443 +655,28 @@ async def on_message(message):
             await client.add_roles(message.author,role)
             await client.send_message(message.channel,f"{role.name}役職を{message.author.mention}さんに付与いたしました。")
             return
-        
-    if message.content == "イベント管理参加":
-        if not message.server.id == "337524390155780107":
-            return
-        role = discord.utils.get(message.server.roles,name="イベント管理委員会")
-        await client.add_roles(message.author,role)
-        await client.send_message(message.channel,f"{role.name}役職を{message.author.mention}さんに付与いたしました。")
-        return
 
-    # クラン関連
-    # -------------------------------------------------------------------------------------------------------------------
-    if message.author.id == "304932786286886912":
-        if message.content.startswith("経験値配布"):
-            role = discord.utils.get(message.server.roles,name=message.content.split()[1])
-            for member in message.server.members:
-                if role is None:
-                    await client.send_message(message.channel,"その役職はこの鯖にはありません。")
-                    return
-                if role in member.roles:
-                    if int(message.content.split()[2]) >= 1000000:
-                        await client.send_message(message.channel,"`1000000`より上の数は配布できません。")
-                        return
-                    await asyncio.sleep(1)
-                    await client.send_message(message.channel,
-                                            f"::exp <@{member.id}> {int(message.content.split()[2])}")
-            up = discord.Color(random.randint(0,0xFFFFFF))
-            embed = discord.Embed(
-                title="クラン経験値配布ログ",
-                description=f"{role.mention}情報!!:\n{message.author.mention}さんが経験値をばら撒きました！\n\n`{len([m for m in message.server.members if role in m.roles])}`名のメンバー全員に[`{int(message.content.split()[2])}EXP`]を付与しました。\nこのクランに合計[`{len([m for m in message.server.members if role in m.roles]) * int(message.content.split()[2])}EXP`]を配りました！",
-                colour=up
-            )
-            await client.send_message(client.get_channel("553028767702974464"),embed=embed)
-            return
-            
-    if message.channel.id == "550941424065970176":
-        if message.author.id == client.user.id:
-            return
-        await asyncio.sleep(2)
-        await client.delete_message(message)
-        if "に入りたいです" in message.content:
-            role = discord.utils.get(message.server.roles,name="境界線の彼方")
-            if role in message.author.roles:
-                a = await client.send_message(message.channel,f"{message.author.mention}さん！\nあなたは既に一つのクランに所属しています！")
-                await asyncio.sleep(10)
-                await client.delete_message(a)
-                return
-            role = discord.utils.get(message.server.roles,name="輝く星の最果て")
-            if role in message.author.roles:
-                a = await client.send_message(message.channel,f"{message.author.mention}さん！\nあなたは既に一つのクランに所属しています！")
-                await asyncio.sleep(10)
-                await client.delete_message(a)
-                return
-            role = discord.utils.get(message.server.roles,name="大地の根源と終末")
-            if role in message.author.roles:
-                a = await client.send_message(message.channel,f"{message.author.mention}さん！\nあなたは既に一つのクランに所属しています！")
-                await asyncio.sleep(10)
-                await client.delete_message(a)
-                return
-            role = discord.utils.get(message.server.roles,name="休日のとある一日")
-            if role in message.author.roles:
-                a = await client.send_message(message.channel,f"{message.author.mention}さん！\nあなたは既に一つのクランに所属しています！")
-                await asyncio.sleep(10)
-                await client.delete_message(a)
-                return
-            role = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
-            if role in message.author.roles:
-                a = await client.send_message(message.channel,f"{message.author.mention}さん！\nあなたは既に一つのクランに所属しています！")
-                await asyncio.sleep(10)
-                await client.delete_message(a)
-                return
-            else:
-                attachable_roles = ("境界線の彼方","輝く星の最果て","大地の根源と終末","休日のとある一日","宇宙に広がる星屑の集合体")
-                roles = [role for role in message.server.roles if
-                         role.name in attachable_roles and role.name in message.content]
-                if not roles:
-                    a = await client.send_message(message.channel,
-                                                  f"{message.author.mention}さん。この鯖にはこの役職名の役職は存在しないか付与することが出来ない役職です！")
-                    await asyncio.sleep(10)
-                    await client.delete_message(a)
-                    return
-                else:
-                    await client.add_roles(message.author,*roles)
-                    up = discord.Color(random.randint(0,0xFFFFFF))
-                    role = discord.utils.get(message.server.roles,name=message.content[2:-7])
-                    embed = discord.Embed(
-                        title="クラン参加ログ",
-                        description=f"""
-                        {role.mention}情報!!:
-                        {message.author.mention}さんが『{role}』に参加しました！
-
-                        今現在の{role}のメンバー数は{len([m for m in message.server.members if role in m.roles])}名です！
-                        """,
-                        colour=up,
-                        timestamp=message.timestamp
-                    )
-                    embed.set_thumbnail(
-                        url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
-                    )
-                    embed.set_footer(
-                        text="加入時刻: "
-                    )
-                    await client.send_message(client.get_channel("553028767702974464"),embed=embed)
-                    return
-
-    if message.content.startswith("除外"):
-        user = message.mentions[0]
-        try:
-            reason = message.content.split()[2]
-        except Exception:
-            reason = None
-        role = discord.utils.get(message.server.roles,name="境界線の彼方:総長&副総長")
-        role1 = discord.utils.get(message.server.roles,name="境界線の彼方")
-        for member in message.server.members:
-            if role in member.roles:
-                if message.channel.id == "550936853281243136":
-                    if role1 in user.roles:
-                        if not reason:
-                            await client.send_message(message.channel,"理由をお書きください。\n[例:除外 @メンション 理由]")
-                            return
-                        else:
-                            await client.remove_roles(user,role1)
-                            await client.send_message(message.channel,
-                                                      f"{message.author.mention}さんが『{user}』さんを除外しました。")
-                            up = discord.Color(random.randint(0,0xFFFFFF))
-                            embed = discord.Embed(
-                                title="除外ログ",
-                                description=f"{role1.mention}情報!!:\n\n{message.author.mention}さんが『{user.mention}』さんを除外しました。\n\n理由:\n```{reason}```",
-                                colour=up
-                            )
-                            embed.set_footer(
-                                text=f"今現在の境界線の彼方のメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                            )
-                            await client.send_message(client.get_channel("553028767702974464"),embed=embed)
-                            return
-        role = discord.utils.get(message.server.roles,name="輝く星の最果て:総長&副総長")
-        role1 = discord.utils.get(message.server.roles,name="輝く星の最果て")
-        for member in message.server.members:
-            if role in member.roles:
-                if message.channel.id == "550937108915945473":
-                    if role1 in user.roles:
-                        if not reason:
-                            await client.send_message(message.channel,"理由をお書きください。\n[例:除外 @メンション 理由]")
-                            return
-                        else:
-                            await client.remove_roles(user,role1)
-                            await client.send_message(message.channel,
-                                                      f"{message.author.mention}さんが『{user}』さんを除外しました。")
-                            up = discord.Color(random.randint(0,0xFFFFFF))
-                            embed = discord.Embed(
-                                title="除外ログ",
-                                description=f"{role1.mention}情報!!:\n\n{message.author.mention}さんが『{user.mention}』さんを除外しました。\n\n理由:\n```{reason}```",
-                                colour=up
-                            )
-                            embed.set_footer(
-                                text=f"今現在の輝く星の最果てのメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                            )
-                            await client.send_message(client.get_channel("553028767702974464"),embed=embed)
-                            return
-        role = discord.utils.get(message.server.roles,name="大地の根源と終末:総長&副総長")
-        role1 = discord.utils.get(message.server.roles,name="大地の根源と終末")
-        for member in message.server.members:
-            if role in member.roles:
-                if message.channel.id == "550937434569965576":
-                    if role1 in user.roles:
-                        if not reason:
-                            await client.send_message(message.channel,"理由をお書きください。\n[例:除外 @メンション 理由]")
-                            return
-                        else:
-                            await client.remove_roles(user,role1)
-                            await client.send_message(message.channel,
-                                                      f"{message.author.mention}さんが『{user}』さんを除外しました。")
-                            up = discord.Color(random.randint(0,0xFFFFFF))
-                            embed = discord.Embed(
-                                title="除外ログ",
-                                description=f"{role1.mention}情報!!:\n\n{message.author.mention}さんが『{user.mention}』さんを除外しました。\n\n理由:\n```{reason}```",
-                                colour=up
-                            )
-                            embed.set_footer(
-                                text=f"今現在の大地の根源と終末のメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                            )
-                            await client.send_message(client.get_channel("553028767702974464"),embed=embed)
-                            return
-        role = discord.utils.get(message.server.roles,name="休日のとある一日:総長&副総長")
-        role1 = discord.utils.get(message.server.roles,name="休日のとある一日")
-        for member in message.server.members:
-            if role in member.roles:
-                if message.channel.id == "550937533878370338":
-                    if role1 in user.roles:
-                        if not reason:
-                            await client.send_message(message.channel,"理由をお書きください。\n[例:除外 @メンション 理由]")
-                            return
-                        else:
-                            await client.remove_roles(user,role1)
-                            await client.send_message(message.channel,
-                                                      f"{message.author.mention}さんが『{user}』さんを除外しました。")
-                            up = discord.Color(random.randint(0,0xFFFFFF))
-                            embed = discord.Embed(
-                                title="除外ログ",
-                                description=f"{role1.mention}情報!!:\n\n{message.author.mention}さんが『{user.mention}』さんを除外しました。\n\n理由:\n```{reason}```",
-                                colour=up
-                            )
-                            embed.set_footer(
-                                text=f"今現在の休日のとある一日のメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                            )
-                            await client.send_message(client.get_channel("553028767702974464"),embed=embed)
-                            return
-        role = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体:総長&副総長")
-        role1 = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
-        for member in message.server.members:
-            if role in member.roles:
-                if message.channel.id == "551523371364384779":
-                    if role1 in user.roles:
-                        if not reason:
-                            await client.send_message(message.channel,"理由をお書きください。\n[例:除外 @メンション 理由]")
-                            return
-                        else:
-                            await client.remove_roles(user,role1)
-                            await client.send_message(message.channel,
-                                                      f"{message.author.mention}さんが{user}さんを除外しました。")
-                            up = discord.Color(random.randint(0,0xFFFFFF))
-                            embed = discord.Embed(
-                                title="除外ログ",
-                                description=f"{role1.mention}情報!!:\n\n{message.author.mention}さんが『{user.mention}』さんを除外しました。\n\n理由:\n```{reason}```",
-                                colour=up
-                            )
-                            embed.set_footer(
-                                text=f"今現在の宇宙に広がる星屑の集合体のメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                            )
-                            await client.send_message(client.get_channel("553028767702974464"),embed=embed)
-                            return
-
-    if message.content == "自クラン勢力図":
-        role1 = discord.utils.get(message.server.roles,name="境界線の彼方")
-        if role1 in message.author.roles:
-            up = discord.Color(random.randint(0,0xFFFFFF))
-
-            async def send(member_data):
-                role1 = discord.utils.get(message.server.roles,name="境界線の彼方")
-                role = discord.utils.get(message.server.roles,name="境界線の彼方:総長&副総長")
-                embed = discord.Embed(
-                    title="『境界線の彼方クラン』の勢力図",
-                    description=f"{role.mention}権限持ち:\n総長:<@348385393160355840>さん\n副総長:<@252247332630954005>さん\n\n{role1.mention}のメンバー表:\n" + member_data,
-                    color=up
-                )
-                embed.set_footer(
-                    text=f"今現在の境界線の彼方のメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                )
-                await client.send_message(message.channel,embed=embed)
-
-            i = 1
-            member_data = ""
-            role1 = discord.utils.get(message.server.roles,name="境界線の彼方")
-            for member in message.server.members:
-                if role1 in member.roles:
-                    member_data += "{0}人目:『{1}』\n".format(i,member.name)
-                    if i % 100 == 0:
-                        await send(member_data)
-                        # リセットする
-                        member_data = ""
-                    i += 1
-            else:
-                await send(member_data)
-                return
-
-        role1 = discord.utils.get(message.server.roles,name="輝く星の最果て")
-        if role1 in message.author.roles:
-            up = discord.Color(random.randint(0,0xFFFFFF))
-
-            async def send(member_data):
-                role1 = discord.utils.get(message.server.roles,name="輝く星の最果て")
-                role = discord.utils.get(message.server.roles,name="輝く星の最果て:総長&副総長")
-                embed = discord.Embed(
-                    title="『輝く星の最果てクラン』の勢力図",
-                    description=f"{role.mention}権限持ち:\n総長:<@376728551904247808>さん\n副総長:<@434340186898563073>さん\n幹部:<@409457253931024384>\n幹部:<@328815420033466368>\n幹部:<@550304087414145034>\n\n{role1.mention}のメンバー表:\n" + member_data,
-                    color=up
-                )
-                embed.set_footer(
-                    text=f"今現在の輝く星の最果てのメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                )
-                await client.send_message(message.channel,embed=embed)
-
-            i = 1
-            member_data = ""
-            role1 = discord.utils.get(message.server.roles,name="輝く星の最果て")
-            for member in message.server.members:
-                if role1 in member.roles:
-                    member_data += "{0}人目:『{1}』\n".format(i,member.name)
-                    if i % 100 == 0:
-                        await send(member_data)
-                        # リセットする
-                        member_data = ""
-                    i += 1
-            else:
-                await send(member_data)
-                return
-
-        role1 = discord.utils.get(message.server.roles,name="大地の根源と終末")
-        if role1 in message.author.roles:
-            up = discord.Color(random.randint(0,0xFFFFFF))
-
-            async def send(member_data):
-                role = discord.utils.get(message.server.roles,name="大地の根源と終末:総長&副総長")
-                role1 = discord.utils.get(message.server.roles,name="大地の根源と終末")
-                embed = discord.Embed(
-                    title="『大地の根源と終末クラン』の勢力図",
-                    description=f"{role.mention}権限持ち:\n総長:<@460208854362357770>さん\n副総長:<@507161988682743818>さん\n\n{role1.mention}のメンバー表:\n" + member_data,
-                    color=up
-                )
-                embed.set_footer(
-                    text=f"今現在の大地の根源と終末のメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                )
-                await client.send_message(message.channel,embed=embed)
-
-            i = 1
-            member_data = ""
-            role1 = discord.utils.get(message.server.roles,name="大地の根源と終末")
-            for member in message.server.members:
-                if role1 in member.roles:
-                    member_data += "{0}人目:『{1}』\n".format(i,member.name)
-                    if i % 100 == 0:
-                        await send(member_data)
-                        # リセットする
-                        member_data = ""
-                    i += 1
-            else:
-                await send(member_data)
-                return
-
-        role1 = discord.utils.get(message.server.roles,name="休日のとある一日")
-        if role1 in message.author.roles:
-            up = discord.Color(random.randint(0,0xFFFFFF))
-
-            async def send(member_data):
-                role = discord.utils.get(message.server.roles,name="休日のとある一日:総長&副総長")
-                role1 = discord.utils.get(message.server.roles,name="休日のとある一日")
-                embed = discord.Embed(
-                    title="『休日のとある一日クラン』の勢力図",
-                    description=f"{role.mention}権限持ち:\n総長:<@477450637710196737>さん\n副総長:<@469384078160953354>さん\n\n{role1.mention}のメンバー表:\n" + member_data,
-                    color=up
-                )
-                embed.set_footer(
-                    text=f"今現在の休日のとある一日のメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                )
-                await client.send_message(message.channel,embed=embed)
-
-            i = 1
-            member_data = ""
-            role1 = discord.utils.get(message.server.roles,name="休日のとある一日")
-            for member in message.server.members:
-                if role1 in member.roles:
-                    member_data += "{0}人目:『{1}』\n".format(i,member.name)
-                    if i % 100 == 0:
-                        await send(member_data)
-                        # リセットする
-                        member_data = ""
-                    i += 1
-            else:
-                await send(member_data)
-                return
-
-        role1 = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
-        if role1 in message.author.roles:
-            up = discord.Color(random.randint(0,0xFFFFFF))
-
-            async def send(member_data):
-                role = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体:総長&副総長")
-                role1 = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
-                embed = discord.Embed(
-                    title="『宇宙に広がる星屑の集合体クラン』の勢力図",
-                    description=f"{role.mention}権限持ち:\n今はだれも居ません！\n\n{role1.mention}のメンバー表:\n" + member_data,
-                    color=up
-                )
-                embed.set_footer(
-                    text=f"今現在の宇宙に広がる星屑の集合体のメンバー数は{len([m for m in message.server.members if role1 in m.roles])}名です！"
-                )
-                await client.send_message(message.channel,embed=embed)
-
-            i = 1
-            member_data = ""
-            role1 = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
-            for member in message.server.members:
-                if role1 in member.roles:
-                    member_data += "{0}人目:『{1}』\n".format(i,member.name)
-                    if i % 100 == 0:
-                        await send(member_data)
-                        # リセットする
-                        member_data = ""
-                    i += 1
-            else:
-                await send(member_data)
-                return
-
-    if message.content == "クラン勢力図":
-        role1 = discord.utils.get(message.server.roles,name="境界線の彼方")
-        count1 = len([m for m in message.server.members if role1 in m.roles])
-        role2 = discord.utils.get(message.server.roles,name="輝く星の最果て")
-        count2 = len([m for m in message.server.members if role2 in m.roles])
-        role3 = discord.utils.get(message.server.roles,name="大地の根源と終末")
-        count3 = len([m for m in message.server.members if role3 in m.roles])
-        role4 = discord.utils.get(message.server.roles,name="休日のとある一日")
-        count4 = len([m for m in message.server.members if role4 in m.roles])
-        role5 = discord.utils.get(message.server.roles,name="宇宙に広がる星屑の集合体")
-        count5 = len([m for m in message.server.members if role5 in m.roles])
-        up = discord.Color(random.randint(0,0xFFFFFF))
-        embed = discord.Embed(
-            title="クランの勢力表:",
-            description=f"""
-                        {role1.mention}: {count1}名
-                        総長:<@348385393160355840>さん | 副総長:<@252247332630954005>さん
-
-                        {role2.mention}: {count2}名
-                        総長:<@376728551904247808>さん | 副総長:<@434340186898563073>さん
-                        
-                        {role3.mention}: {count3}名
-                        総長:<@460208854362357770>さん | 副総長:<@507161988682743818>さん
-
-                        {role4.mention}: {count4}名
-                        総長:<@477450637710196737>さん | 副総長:<@469384078160953354>さん
-
-                        {role5.mention}: {count5}名
-                        総長:現在無し | 副総長:現在無し
-
-                        ※総長や副総長などはそのクランで
-                        15名を超えないと就任することが出来ません。
-
-                        総長や副総長は悪目立ちしてる人や
-                        荒らしが入ってきた場合、自分のクランのメンバーだけに対して
-                        『除外 @メンション 理由』とすればそのメンバーは除外されます。
-                        """,
-            colour=up
-        )
-        await client.send_message(message.channel,embed=embed)
-        return
-    # -------------------------------------------------------------------------------------------------------------------
 
     # globalチャット関連
-    # -------------------------------------------------------------------------------------------------------------------
+    channel = [channel for channel in message.server.channels if message.channel.name == "tao-global"]
+    if channel:
+        global counts
+        check = await client.wait_for_message(timeout=4,author=message.author)
+        if check:
+            counts += 1
+            if counts > 7:
+                if db_get_author(int(message.author.id)) == True:
+                    embed = discord.Embed(
+                        description=f"{message.author.mention}さんはスパムをしたためこのチャンネルでは発言できません。",
+                        color=discord.Color(random.randint(0,0xFFFFFF))
+                    )
+                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in
+                                           client.get_all_channels() if
+                                           c.name == 'tao-global'))
+                    return
+        if check is None:
+            counts = 0
+            
     channel = [channel for channel in message.server.channels if message.channel.name == "tao-global"]
     if channel:
         if message.author == client.user:
@@ -1252,6 +725,7 @@ async def on_message(message):
                     await asyncio.sleep(3)
                     await client.delete_message(message)
                     return
+                
             if len(message.embeds) != 0:
                 embed = message.embeds[0]
                 if embed.get("author") and embed["author"].get("name"):
@@ -1272,7 +746,7 @@ async def on_message(message):
                     embed.set_author(name="{}のステータス:".format(authors),)
                     embed.add_field(name="PETの名前:",value=name)
                     embed.add_field(name="Lv",value=levels)
-                    embed.add_field(name="ATK",value=atk)
+                    embed.add_field(name="ATK",value=hp)
                     embed.add_field(name="攻撃確率",value=exp)
                     embed.set_thumbnail(url=url)
                     embed.add_field(name="戦闘状況:",value=sentou)
@@ -1286,24 +760,6 @@ async def on_message(message):
             await client.delete_message(message)
             return
         else:
-            global counts
-            check = await client.wait_for_message(timeout=4,author=message.author)
-            if check:
-                counts += 1
-                print(counts)
-                if counts > 7:
-                    if db_get_author(int(message.author.id)) == True:
-                        embed = discord.Embed(
-                            description=f"{message.author.mention}さんはスパムをしたためこのチャンネルでは発言できません。",
-                            color=discord.Color(random.randint(0,0xFFFFFF))
-                        )
-                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in
-                                               client.get_all_channels() if
-                                               c.name == 'tao-global'))
-                        return
-            if check is None:
-                counts = 0
-                print("counts out")
             if message.attachments:
                 for row in db_syougou(int(message.author.id)):
                     embed = discord.Embed(
@@ -1353,7 +809,7 @@ async def on_message(message):
                     await asyncio.sleep(10)
                     await client.delete_message(message)
                     return
-                
+
             await client.delete_message(message)
             if message.content.startswith("称号作成 "):
                 if message.author.id == "304932786286886912":
@@ -1462,7 +918,7 @@ async def on_message(message):
                 else:
                     await send(server_data)
                     return
-            
+
             if message.content == "この鯖の詳細":
                 server = message.server
                 region = message.server.region
@@ -1577,7 +1033,7 @@ async def on_message(message):
             os.kill(os.getpid(),signal.CTRL_C_EVENT)
             # await client.logout()
         except Exception:
-            print("logout_error")
+            pass
     # TAOのstatusの処理
     # -------------------------------------------------------------------------------------------------------------------
     if message.content == "&list":
@@ -1592,7 +1048,6 @@ async def on_message(message):
             i = 0
             reply = ""
             for row in db_read(message.server.id):
-                print(row)
                 if i % 25 == 0:
                     if i > 0:
                         embed = discord.Embed(
@@ -1684,23 +1139,24 @@ async def on_message(message):
             role_id = next((role_id for role_id,lu in role_level.items() if (lambda x: lu[0] <= x <= lu[1])(level)),
                            None)
             role = discord.utils.get(message.server.roles,id=str(role_id))
-            print(role_id)
-            print(role)
             next_level = 0
             for _,upper in sorted(role_level.values()):
                 if upper > level:
                     next_level = upper + 1
                     break
             if max([upper for _,upper in role_level.values()]) < level:
+                await asyncio.sleep(2)
                 await client.send_message(message.channel,
                                           "```凄い！あなたはこの鯖のレベル役職の付与範囲を超えてしまった！\nぜひ運営に役職を追加して貰ってください！\nこの鯖のTAOの最高レベル役職は『{}』です。```".format(
                                               max_role))
                 return
             if role in member.roles:
+                await asyncio.sleep(2)
                 await client.send_message(message.channel,
                                           "`次のレベル役職まで後{}Lvです！`".format(int(next_level - level)))
                 return
             else:
+                await asyncio.sleep(2)
                 await client.add_roles(member,role)
                 await client.send_message(message.channel,
                                           "`役職名:『{0}』を付与しました。\n次のレベル役職まで後{1}Lvです！`".format(
@@ -1732,7 +1188,6 @@ def db_read(server_id):
     server_id = int(server_id)
     con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS roles(server_id BigInt,lower INTEGER,upper INTEGER,role_id BigInt);")
     c.execute('SELECT lower,upper,role_id FROM roles WHERE server_id=%s ORDER BY lower;',(server_id,))
     con.commit()
     ans = c.fetchall()
@@ -1741,14 +1196,13 @@ def db_read(server_id):
     else:
         con.commit()
         c.close()
-        con.close() 
+        con.close()
 
 
+con = psycopg2.connect(os.environ.get("DATABASE_URL"))
 def db_reset(server_id):
     server_id = int(server_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS roles(server_id BigInt,lower INTEGER,upper INTEGER,role_id BigInt);")
     c.execute("delete from roles where server_id=%s;",(server_id,))
     con.commit()
     c.close()
@@ -1761,9 +1215,7 @@ def db_write(server_id,lower,upper,role_id):
     lower = int(lower)
     upper = int(upper)
     role_id = int(role_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS roles(server_id BigInt,lower INTEGER,upper INTEGER,role_id BigInt);")
     if lower > upper:
         lower,upper = upper,lower
     c.execute('SELECT * FROM roles WHERE server_id=%s AND lower<=%s AND upper>=%s;',(server_id,lower,lower))
@@ -1775,7 +1227,8 @@ def db_write(server_id,lower,upper,role_id):
     c.execute('SELECT * FROM roles WHERE server_id=%s AND role_id=%s;',(server_id,role_id))
     if len(c.fetchall()) > 0:
         return -3  # "役職はもう既にあります"
-    c.execute("INSERT INTO roles(server_id, lower, upper, role_id) VALUES(%s,%s,%s,%s);",(server_id,lower,upper,role_id))
+    c.execute("INSERT INTO roles(server_id, lower, upper, role_id) VALUES(%s,%s,%s,%s);",
+              (server_id,lower,upper,role_id))
     con.commit()
     con.commit()
     c.close()
@@ -1785,9 +1238,7 @@ def db_write(server_id,lower,upper,role_id):
 
 def db_get_message(author_id):
     author_id = int(author_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get(author_id BigInt);")
     c.execute('SELECT * FROM get WHERE author_id=%s;',(author_id,))
     if c.fetchall():
         con.commit()
@@ -1798,23 +1249,17 @@ def db_get_message(author_id):
 
 def db_get_author(author_id):
     author_id = int(author_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get(author_id BigInt);")
     c.execute("INSERT INTO get(author_id) VALUES(%s);",(author_id,))
     con.commit()
     c.close()
     con.close()
     return True
 
-
 def db_create(syougoo_name,author_id):
     syougoo_name = str(syougoo_name)
     author_id = int(author_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name varchar,author_id BigInt);")
     c.execute('SELECT * FROM syougou WHERE author_id=%s;',(author_id,))
     if c.fetchall():
         return -1
@@ -1824,12 +1269,9 @@ def db_create(syougoo_name,author_id):
     con.close()
     return True
 
-
 def db_syougou(author_id):
     author_id = int(author_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name varchar,author_id BigInt);")
     c.execute('SELECT syougoo_name, author_id FROM syougou WHERE author_id=%s;',(author_id,))
     ans = c.fetchall()
     for row in ans:
@@ -1839,39 +1281,30 @@ def db_syougou(author_id):
         c.close()
         con.close()
 
-
 def db_reset_syougou(author_id):
     author_id = int(author_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS syougou(syougoo_name varchar,author_id BigInt);")
     c.execute("delete from syougou where author_id=%s;",(author_id,))
     con.commit()
     c.close()
     con.close()
     return True
 
-
 def db_get_role(author_id,role_name):
     author_id = int(author_id)
     role_name = str(role_name)
     if role_name == "@everyone":
         return
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_name varchar);")
     c.execute("INSERT INTO get_role(author_id, role_name) VALUES(%s,%s);",(author_id,role_name))
     con.commit()
     c.close()
     con.close()
     return True
 
-
 def db_join_member(author_id):
     author_id = int(author_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_name varchar);")
     c.execute("""SELECT author_id, role_name FROM get_role WHERE author_id='%s';""",(author_id,))
     ans = c.fetchall()
     for row in ans:
@@ -1882,41 +1315,14 @@ def db_join_member(author_id):
         c.close()
         con.close()
 
-
 def db_reset_role(author_id):
     author_id = int(author_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS get_role(author_id BigInt,role_name varchar);")
     c.execute("delete from get_role where author_id=%s;",(author_id,))
     con.commit()
     c.close()
     con.close()
     return True
-       
-def db_write_tsukishima(server_id):
-    server_id = int(server_id)
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
-    c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS tsukishimaaa(channel_id Bigint);")
-    c.execute("INSERT INTO tsukishimaaa(channel_id) VALUES(%s);",(server_id,))
-    con.commit()
-    c.close()
-    con.close()
-    return True
-
-def db_get_tsukishima():
-    con = psycopg2.connect(os.environ.get("DATABASE_URL"))
-    c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS tsukishimaaa(channel_id Bigint);")
-    c.execute("select channel_id, count(*) from tsukishimaaa group by channel_id order by count(*) desc;")
-    ans = c.fetchall()
-    for row in ans:
-        yield (row[0],row[1])
-    else:
-        con.commit()
-        c.close()
-        con.close()
 
 client.loop.create_task(change_role())
 client.loop.create_task(change_status())
