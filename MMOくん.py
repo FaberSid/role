@@ -658,6 +658,7 @@ async def on_message(message):
 
 
     # globalチャット関連
+            
     channel = [channel for channel in message.server.channels if message.channel.name == "tao-global"]
     if channel:
         global counts
@@ -676,9 +677,6 @@ async def on_message(message):
                     return
         if check is None:
             counts = 0
-            
-    channel = [channel for channel in message.server.channels if message.channel.name == "tao-global"]
-    if channel:
         if message.author == client.user:
             return
         if message.author.bot:
