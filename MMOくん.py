@@ -107,10 +107,6 @@ async def on_member_join(member):
         return
     if client.user == member:
         return
-
-    await client.send_message(client.get_channel('559284148649328670'),
-                              "イベント情報!!\n後`『{}』`人がこの鯖に入ったらなんらかのイベント開始です！".format(
-                                  int(50 - len(member.server.members) % 50)))
     await client.send_message(member,
                               "`{0}さんようこそ{1}へ！\nこの鯖はMMOくんとTAOくん専門の鯖です！\n今後ともよろしくお願いします！`".format(member.name,
                                                                                                  member.server.name))
@@ -677,179 +673,342 @@ async def on_message(message):
                     return
         if check is None:
             counts = 0
-        if message.author == client.user:
-            return
-        if message.author.bot:
-            if not message.author.id == "526620171658330112":
+            if message.author == client.user:
                 return
-            if len(message.embeds) != 0:
-                embed = message.embeds[0]
-                if embed.get("author") and embed["author"].get("name"):
-                    if embed["author"]["name"][-7:] != "のステータス:":
-                        return
-                    url = embed["thumbnail"]["url"]
-                    authors = embed["author"]["name"][:-7]
-                    for f in embed["fields"]:
-                        if f["name"] == "Lv":
-                            levels = str(f["value"])
-                        if f["name"] == "HP":
-                            hp = str(f["value"])
-                        if f["name"] == "ATK":
-                            atk = str(f["value"])
-                        if f["name"] == "EXP":
-                            exp = str(f["value"])
-                        if f["name"] == "次のLvまで":
-                            to_next_level = str(f["value"])
-                        if f["name"] == "プレイヤーランク":
-                            prank = str(f["value"])
-                        if f["name"] == "所持アイテム":
-                            items = str(f["value"])
-                        if f["name"] == "戦闘状況:":
-                            sentou = str(f["value"])
-                    embed = discord.Embed()
-                    embed.set_author(name="{}のステータス:".format(authors),)
-                    embed.add_field(name="Lv",value=levels)
-                    embed.add_field(name="HP",value=hp)
-                    embed.add_field(name="ATK",value=atk)
-                    embed.add_field(name="EXP",value=exp)
-                    embed.add_field(name="次のLvまで",value=to_next_level)
-                    embed.add_field(name="プレイヤーランク",value=prank)
-                    embed.add_field(name="所持アイテム",value=items)
-                    embed.set_thumbnail(url=url)
-                    embed.add_field(name="戦闘状況:",value=sentou)
-                    await asyncio.sleep(5)
-                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                           c.name == 'tao-global'))
-                    await asyncio.sleep(3)
-                    await client.delete_message(message)
+            if message.author.bot:
+                if not message.author.id == "526620171658330112":
                     return
-                
-            if len(message.embeds) != 0:
-                embed = message.embeds[0]
-                if embed.get("author") and embed["author"].get("name"):
-                    if embed["author"]["name"][-11:] != "のペットのステータス:":
+                if len(message.embeds) != 0:
+                    embed = message.embeds[0]
+                    if embed.get("author") and embed["author"].get("name"):
+                        if embed["author"]["name"][-7:] != "のステータス:":
+                            return
+                        url = embed["thumbnail"]["url"]
+                        authors = embed["author"]["name"][:-7]
+                        for f in embed["fields"]:
+                            if f["name"] == "Lv":
+                                levels = str(f["value"])
+                            if f["name"] == "HP":
+                                hp = str(f["value"])
+                            if f["name"] == "ATK":
+                                atk = str(f["value"])
+                            if f["name"] == "EXP":
+                                exp = str(f["value"])
+                            if f["name"] == "次のLvまで":
+                                to_next_level = str(f["value"])
+                            if f["name"] == "プレイヤーランク":
+                                prank = str(f["value"])
+                            if f["name"] == "所持アイテム":
+                                items = str(f["value"])
+                            if f["name"] == "戦闘状況:":
+                                sentou = str(f["value"])
+                        embed = discord.Embed()
+                        embed.set_author(name="{}のステータス:".format(authors),)
+                        embed.add_field(name="Lv",value=levels)
+                        embed.add_field(name="HP",value=hp)
+                        embed.add_field(name="ATK",value=atk)
+                        embed.add_field(name="EXP",value=exp)
+                        embed.add_field(name="次のLvまで",value=to_next_level)
+                        embed.add_field(name="プレイヤーランク",value=prank)
+                        embed.add_field(name="所持アイテム",value=items)
+                        embed.set_thumbnail(url=url)
+                        embed.add_field(name="戦闘状況:",value=sentou)
+                        await asyncio.sleep(5)
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                               c.name == 'tao-global'))
+                        await asyncio.sleep(3)
+                        await client.delete_message(message)
                         return
-                    url = embed["thumbnail"]["url"]
-                    authors = embed["author"]["name"][:-11]
-                    for f in embed["fields"]:
-                        if f["name"] == "PETの名前:":
-                            name = str(f["value"])
-                        if f["name"] == "Lv":
-                            levels = str(f["value"])
-                        if f["name"] == "ATK":
-                            hp = str(f["value"])
-                        if f["name"] == "攻撃確率":
-                            exp = str(f["value"])
-                    embed = discord.Embed()
-                    embed.set_author(name="{}のステータス:".format(authors),)
-                    embed.add_field(name="PETの名前:",value=name)
-                    embed.add_field(name="Lv",value=levels)
-                    embed.add_field(name="ATK",value=hp)
-                    embed.add_field(name="攻撃確率",value=exp)
-                    embed.set_thumbnail(url=url)
-                    embed.add_field(name="戦闘状況:",value=sentou)
-                    await asyncio.sleep(5)
-                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+
+                if len(message.embeds) != 0:
+                    embed = message.embeds[0]
+                    if embed.get("author") and embed["author"].get("name"):
+                        if embed["author"]["name"][-11:] != "のペットのステータス:":
+                            return
+                        url = embed["thumbnail"]["url"]
+                        authors = embed["author"]["name"][:-11]
+                        for f in embed["fields"]:
+                            if f["name"] == "PETの名前:":
+                                name = str(f["value"])
+                            if f["name"] == "Lv":
+                                levels = str(f["value"])
+                            if f["name"] == "ATK":
+                                hp = str(f["value"])
+                            if f["name"] == "攻撃確率":
+                                exp = str(f["value"])
+                        embed = discord.Embed()
+                        embed.set_author(name="{}のステータス:".format(authors),)
+                        embed.add_field(name="PETの名前:",value=name)
+                        embed.add_field(name="Lv",value=levels)
+                        embed.add_field(name="ATK",value=hp)
+                        embed.add_field(name="攻撃確率",value=exp)
+                        embed.set_thumbnail(url=url)
+                        embed.add_field(name="戦闘状況:",value=sentou)
+                        await asyncio.sleep(5)
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                               c.name == 'tao-global'))
+                        await asyncio.sleep(3)
+                        await client.delete_message(message)
+                        return
+            if db_get_message(int(message.author.id)) == True:
+                await client.delete_message(message)
+                return
+            else:
+                if message.attachments:
+                    for row in db_syougou(int(message.author.id)):
+                        embed = discord.Embed(
+                            title="発言者:" + str(message.author),
+                            color=discord.Color.magenta(),
+                            timestamp=message.timestamp
+                        )
+                        embed.set_image(
+                            url=message.attachments[0]['url']
+                        )
+                        embed.set_thumbnail(
+                            url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+                        )
+                        embed.set_author(
+                            name=message.server.name,
+                            icon_url=message.server.icon_url
+                        )
+                        embed.set_footer(
+                            text=f"称号:『{str(row[0])}』発言時刻: "
+                        )
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                               c.name == 'tao-global'))
+                        await asyncio.sleep(10)
+                        await client.delete_message(message)
+                        return
+                    else:
+                        embed = discord.Embed(
+                            title="発言者:" + str(message.author),
+                            color=discord.Color.magenta(),
+                            timestamp=message.timestamp
+                        )
+                        embed.set_image(
+                            url=message.attachments[0]['url']
+                        )
+                        embed.set_thumbnail(
+                            url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+                        )
+                        embed.set_author(
+                            name=message.server.name,
+                            icon_url=message.server.icon_url
+                        )
+                        embed.set_footer(
+                            text="称号:『特になし』発言時刻: "
+                        )
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                               c.name == 'tao-global'))
+                        await asyncio.sleep(10)
+                        await client.delete_message(message)
+                        return
+
+                await client.delete_message(message)
+                if message.content.startswith("称号作成 "):
+                    if message.author.id == "304932786286886912":
+                        ans = db_create(
+                            str(message.content.split()[1]),
+                            int(message.content.split()[2])
+                        )
+                        if ans == True:
+                            up = discord.Color(random.randint(0,0xFFFFFF))
+                            embed = discord.Embed(
+                                description=f"<@{message.content.split()[2]}>さんに『{message.content.split()[1]}』称号を付与しました。",
+                                color=up,
+                                timestamp=message.timestamp
+                            )
+                            embed.set_footer(
+                                text="現在時刻:"
+                            )
+                            await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                                   c.name == 'tao-global'))
+                            return
+                        if ans == -1:
+                            up = discord.Color(random.randint(0,0xFFFFFF))
+                            embed = discord.Embed(
+                                description=f"<@{message.content.split()[2]}>さんは既に称号を持っています。",
+                                color=up,
+                                timestamp=message.timestamp
+                            )
+                            embed.set_footer(
+                                text="現在時刻:"
+                            )
+                            await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                                   c.name == 'tao-global'))
+                            return
+                    else:
+                        up = discord.Color(random.randint(0,0xFFFFFF))
+                        embed = discord.Embed(
+                            description="称号作成コマンドはこのBOTの管理者しか作成できないよ！",
+                            color=up,
+                            timestamp=message.timestamp
+                        )
+                        embed.set_footer(
+                            text="現在時刻:"
+                        )
+                        embed.set_author(
+                            name=message.server.name,
+                            icon_url=message.server.icon_url
+                        )
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                               c.name == 'tao-global'))
+                        return
+
+                if message.content.startswith("称号剥奪 "):
+                    if message.author.id == "304932786286886912":
+                        if db_reset_syougou(int(message.content.split()[1])) == True:
+                            embed = discord.Embed(
+                                description=f"<@{message.content.split()[1]}>さんの称号を剥奪いたしました。",
+                                color=discord.Color(random.randint(0,0xFFFFFF))
+                            )
+                            await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                                   c.name == 'tao-global'))
+                            return
+
+                    else:
+                        up = discord.Color(random.randint(0,0xFFFFFF))
+                        embed = discord.Embed(
+                            description="称号剥奪コマンドはこのBOTの管理者しか作成できないよ！",
+                            color=up,
+                            timestamp=message.timestamp
+                        )
+                        embed.set_footer(
+                            text="現在時刻:"
+                        )
+                        embed.set_author(
+                            name=message.server.name,
+                            icon_url=message.server.icon_url
+                        )
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                               c.name == 'tao-global'))
+                        return
+
+                if message.content == "グローバルリスト":
+                    async def send(server_data):
+                        up = discord.Color(random.randint(0,0xFFFFFF))
+                        embed = discord.Embed(
+                            title="tao-globalチャンネルに接続してるサバリスト:",
+                            description=server_data,
+                            color=up,
+                            timestamp=message.timestamp
+                        )
+                        embed.set_footer(
+                            text="現在時刻:"
+                        )
+                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
+                                               c.name == 'tao-global'))
+
+                    i = 1
+                    server_data = ""
+                    for server in client.servers:
+                        if [client.get_all_channels() for channel in server.channels if channel.name == "tao-global"]:
+                            server_data += "{0}:『{1}』\n".format(i,server.name)
+                            if i % 100 == 0:
+                                await send(server_data)
+                                # リセットする
+                                server_data = ""
+                            i += 1
+                    else:
+                        await send(server_data)
+                        return
+
+                if message.content == "この鯖の詳細":
+                    server = message.server
+                    region = message.server.region
+                    channelss = len(message.server.channels)
+                    memberss = len(message.server.members)
+                    role = str(len(server.roles))
+                    emoji = str(len(server.emojis))
+                    owner = server.owner
+                    tekitou = server.role_hierarchy[0]
+                    online = 0
+                    for i in server.members:
+                        if str(i.status) == 'online' or str(i.status) == 'idle' or str(i.status) == 'dnd':
+                            online += 1
+                    up = discord.Color(random.randint(0,0xFFFFFF))
+                    userembed = discord.Embed(
+                        title=server.name + "の情報:",
+                        color=up
+                    )
+                    userembed.set_thumbnail(
+                        url=server.icon_url
+                    )
+                    userembed.add_field(
+                        name="サーバーID:",
+                        value=server.id
+                    )
+                    userembed.add_field(
+                        name="サーバーオーナ:",
+                        value=owner
+                    )
+                    userembed.add_field(
+                        name="サーバーリュージョン:",
+                        value=region
+                    )
+                    userembed.add_field(
+                        name="メンバー数:",
+                        value=memberss
+                    )
+                    userembed.add_field(
+                        name="チャンネル数:",
+                        value=channelss
+                    )
+                    userembed.add_field(
+                        name="役職数:",
+                        value=role
+                    )
+                    userembed.add_field(
+                        name="現在オンラインの数:",
+                        value=online
+                    )
+                    userembed.add_field(
+                        name="鯖に追加した絵文字の数:",
+                        value=emoji
+                    )
+                    userembed.add_field(
+                        name="サーバー最上位役職:",
+                        value=tekitou
+                    )
+                    userembed.set_footer(
+                        text="サーバー作成日: " + server.created_at.__format__(' %Y/%m/%d %H:%M:%S')
+                    )
+                    await asyncio.gather(*(client.send_message(c,embed=userembed) for c in client.get_all_channels() if
                                            c.name == 'tao-global'))
-                    await asyncio.sleep(3)
-                    await client.delete_message(message)
                     return
-        if db_get_message(int(message.author.id)) == True:
-            await client.delete_message(message)
-            return
-        else:
-            if message.attachments:
+
                 for row in db_syougou(int(message.author.id)):
                     embed = discord.Embed(
                         title="発言者:" + str(message.author),
-                        color=discord.Color.magenta(),
+                        description=message.content,
+                        color=discord.Color.dark_grey(),
                         timestamp=message.timestamp
-                    )
-                    embed.set_image(
-                        url=message.attachments[0]['url']
                     )
                     embed.set_thumbnail(
                         url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
+                    )
+                    embed.set_footer(
+                        text=f"称号:『{str(row[0])}』\n 発言時刻 "
                     )
                     embed.set_author(
                         name=message.server.name,
                         icon_url=message.server.icon_url
                     )
-                    embed.set_footer(
-                        text=f"称号:『{str(row[0])}』発言時刻: "
-                    )
                     await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
                                            c.name == 'tao-global'))
-                    await asyncio.sleep(10)
-                    await client.delete_message(message)
                     return
                 else:
                     embed = discord.Embed(
                         title="発言者:" + str(message.author),
-                        color=discord.Color.magenta(),
+                        description=message.content,
+                        color=discord.Color.dark_grey(),
                         timestamp=message.timestamp
-                    )
-                    embed.set_image(
-                        url=message.attachments[0]['url']
                     )
                     embed.set_thumbnail(
                         url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
                     )
-                    embed.set_author(
-                        name=message.server.name,
-                        icon_url=message.server.icon_url
-                    )
                     embed.set_footer(
-                        text="称号:『特になし』発言時刻: "
-                    )
-                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                           c.name == 'tao-global'))
-                    await asyncio.sleep(10)
-                    await client.delete_message(message)
-                    return
-
-            await client.delete_message(message)
-            if message.content.startswith("称号作成 "):
-                if message.author.id == "304932786286886912":
-                    ans = db_create(
-                        str(message.content.split()[1]),
-                        int(message.content.split()[2])
-                    )
-                    if ans == True:
-                        up = discord.Color(random.randint(0,0xFFFFFF))
-                        embed = discord.Embed(
-                            description=f"<@{message.content.split()[2]}>さんに『{message.content.split()[1]}』称号を付与しました。",
-                            color=up,
-                            timestamp=message.timestamp
-                        )
-                        embed.set_footer(
-                            text="現在時刻:"
-                        )
-                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                               c.name == 'tao-global'))
-                        return
-                    if ans == -1:
-                        up = discord.Color(random.randint(0,0xFFFFFF))
-                        embed = discord.Embed(
-                            description=f"<@{message.content.split()[2]}>さんは既に称号を持っています。",
-                            color=up,
-                            timestamp=message.timestamp
-                        )
-                        embed.set_footer(
-                            text="現在時刻:"
-                        )
-                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                               c.name == 'tao-global'))
-                        return
-                else:
-                    up = discord.Color(random.randint(0,0xFFFFFF))
-                    embed = discord.Embed(
-                        description="称号作成コマンドはこのBOTの管理者しか作成できないよ！",
-                        color=up,
-                        timestamp=message.timestamp
-                    )
-                    embed.set_footer(
-                        text="現在時刻:"
+                        text="称号:『特になし』\n 発言時刻 "
                     )
                     embed.set_author(
                         name=message.server.name,
@@ -858,169 +1017,6 @@ async def on_message(message):
                     await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
                                            c.name == 'tao-global'))
                     return
-
-            if message.content.startswith("称号剥奪 "):
-                if message.author.id == "304932786286886912":
-                    if db_reset_syougou(int(message.content.split()[1])) == True:
-                        embed = discord.Embed(
-                            description=f"<@{message.content.split()[1]}>さんの称号を剥奪いたしました。",
-                            color=discord.Color(random.randint(0,0xFFFFFF))
-                        )
-                        await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                               c.name == 'tao-global'))
-                        return
-
-                else:
-                    up = discord.Color(random.randint(0,0xFFFFFF))
-                    embed = discord.Embed(
-                        description="称号剥奪コマンドはこのBOTの管理者しか作成できないよ！",
-                        color=up,
-                        timestamp=message.timestamp
-                    )
-                    embed.set_footer(
-                        text="現在時刻:"
-                    )
-                    embed.set_author(
-                        name=message.server.name,
-                        icon_url=message.server.icon_url
-                    )
-                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                           c.name == 'tao-global'))
-                    return
-
-            if message.content == "グローバルリスト":
-                async def send(server_data):
-                    up = discord.Color(random.randint(0,0xFFFFFF))
-                    embed = discord.Embed(
-                        title="tao-globalチャンネルに接続してるサバリスト:",
-                        description=server_data,
-                        color=up,
-                        timestamp=message.timestamp
-                    )
-                    embed.set_footer(
-                        text="現在時刻:"
-                    )
-                    await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                           c.name == 'tao-global'))
-
-                i = 1
-                server_data = ""
-                for server in client.servers:
-                    if [client.get_all_channels() for channel in server.channels if channel.name == "tao-global"]:
-                        server_data += "{0}:『{1}』\n".format(i,server.name)
-                        if i % 100 == 0:
-                            await send(server_data)
-                            # リセットする
-                            server_data = ""
-                        i += 1
-                else:
-                    await send(server_data)
-                    return
-
-            if message.content == "この鯖の詳細":
-                server = message.server
-                region = message.server.region
-                channelss = len(message.server.channels)
-                memberss = len(message.server.members)
-                role = str(len(server.roles))
-                emoji = str(len(server.emojis))
-                owner = server.owner
-                tekitou = server.role_hierarchy[0]
-                online = 0
-                for i in server.members:
-                    if str(i.status) == 'online' or str(i.status) == 'idle' or str(i.status) == 'dnd':
-                        online += 1
-                up = discord.Color(random.randint(0,0xFFFFFF))
-                userembed = discord.Embed(
-                    title=server.name + "の情報:",
-                    color=up
-                )
-                userembed.set_thumbnail(
-                    url=server.icon_url
-                )
-                userembed.add_field(
-                    name="サーバーID:",
-                    value=server.id
-                )
-                userembed.add_field(
-                    name="サーバーオーナ:",
-                    value=owner
-                )
-                userembed.add_field(
-                    name="サーバーリュージョン:",
-                    value=region
-                )
-                userembed.add_field(
-                    name="メンバー数:",
-                    value=memberss
-                )
-                userembed.add_field(
-                    name="チャンネル数:",
-                    value=channelss
-                )
-                userembed.add_field(
-                    name="役職数:",
-                    value=role
-                )
-                userembed.add_field(
-                    name="現在オンラインの数:",
-                    value=online
-                )
-                userembed.add_field(
-                    name="鯖に追加した絵文字の数:",
-                    value=emoji
-                )
-                userembed.add_field(
-                    name="サーバー最上位役職:",
-                    value=tekitou
-                )
-                userembed.set_footer(
-                    text="サーバー作成日: " + server.created_at.__format__(' %Y/%m/%d %H:%M:%S')
-                )
-                await asyncio.gather(*(client.send_message(c,embed=userembed) for c in client.get_all_channels() if
-                                       c.name == 'tao-global'))
-                return
-
-            for row in db_syougou(int(message.author.id)):
-                embed = discord.Embed(
-                    title="発言者:" + str(message.author),
-                    description=message.content,
-                    color=discord.Color.dark_grey(),
-                    timestamp=message.timestamp
-                )
-                embed.set_thumbnail(
-                    url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
-                )
-                embed.set_footer(
-                    text=f"称号:『{str(row[0])}』\n 発言時刻 "
-                )
-                embed.set_author(
-                    name=message.server.name,
-                    icon_url=message.server.icon_url
-                )
-                await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                       c.name == 'tao-global'))
-                return
-            else:
-                embed = discord.Embed(
-                    title="発言者:" + str(message.author),
-                    description=message.content,
-                    color=discord.Color.dark_grey(),
-                    timestamp=message.timestamp
-                )
-                embed.set_thumbnail(
-                    url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(message.author)
-                )
-                embed.set_footer(
-                    text="称号:『特になし』\n 発言時刻 "
-                )
-                embed.set_author(
-                    name=message.server.name,
-                    icon_url=message.server.icon_url
-                )
-                await asyncio.gather(*(client.send_message(c,embed=embed) for c in client.get_all_channels() if
-                                       c.name == 'tao-global'))
-                return
 
     # -------------------------------------------------------------------------------------------------------------------
     if message.content.startswith('&shutdown'):
