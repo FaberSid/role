@@ -1320,4 +1320,3 @@ def db_reset_role(author_id):
 
 client.loop.create_task(change_role())
 client.loop.create_task(change_status())
-client.run(os.environ.get("TOKEN"))
