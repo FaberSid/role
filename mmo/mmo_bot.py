@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*- 
 # coding: UTF-8
-import datetime,asyncio,psycopg2,re,random,discord
+import datetime,asyncio,psycopg2,re,random,discord,os
 from collections import defaultdict
 from discord.ext import commands
 
 ROLE_PER_SERVER = defaultdict(list)
 ROLE_LEVEL_PER_SERVER = defaultdict(dict)
 
-Database = "postgres://cnqcjmuqdsoyru:ba8490943e514bb1108c93a52b05598ed7646ee1f06becc59913f2468033867c@ec2-54-246-92-116.eu-west-1.compute.amazonaws.com:5432/dd53bf8sn26vfj"
+Database =os.environ.get("DATABASE_URL")
 
 def db_read(server_id):
     server_id = int(server_id)
