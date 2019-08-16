@@ -598,10 +598,10 @@ class auto_bot(commands.Cog):
                             await channel.send(embed=embed)
                             return await channel.send(f"{role.mention}～月島出たらしいぜ！")
                             
-                if message.embeds[0].title == f"【超激レア】狂乱ネコしろまるが待ち構えている...！\nLv.{lists[0]}  HP:{lists[1]}":
+                if message.embeds[0].title == f"【超激レア】狂気ネコしろまるが待ち構えている...！\nLv.{lists[0]}  HP:{lists[1]}":
                     channels = self.bot.get_channel(message.channel.id)
                     url = f"https://discordapp.com/channels/{message.guild.id}/{message.channel.id}/{message.id}"
-                    embed = discord.Embed(description=f"""{channels.mention}で狂乱ネコしろまるが出現しました！\n`[Lv.{int(lists[0])}]`の狂乱ネコしろまるが出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！\n\n[**この狂乱ネコしろまるへの直通リンク**](<{url}>)""",)
+                    embed = discord.Embed(description=f"""{channels.mention}で狂気ネコしろまるが出現しました！\n`[Lv.{int(lists[0])}]`の狂気ネコしろまるが出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！\n\n[**この狂気ネコしろまるへの直通リンク**](<{url}>)""",)
                     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/366373818064830465/611144211336658945/image0.png")
                     embed.set_footer(text=f"出現時刻: {datetime.datetime.utcnow() + datetime.timedelta(hours=9)}")
                     role = discord.utils.get(message.guild.roles,name="幸せの猫遭遇報告OK")
