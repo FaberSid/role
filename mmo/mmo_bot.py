@@ -158,9 +158,8 @@ class auto_bot(commands.Cog):
             except asyncio.TimeoutError: return
 
     @commands.command(name='wiki',description='このBOTのすべての機能を書いた',hidden=True)
-    async def role_add(self,ctx,*,id:int):
+    async def role_adds(self,ctx,*,id:int):
         if not ctx.message.author.id in [384149850712702986,304932786286886912]:
-            await ctx.message.delete()
             return await ctx.send(f"このコマンドは{self.bot.get_user(304932786286886912).mention}か{self.bot.get_user(384149850712702986).mention}でしか使うことが出来ません")
             
         role = discord.utils.get(ctx.message.guild.roles,name="wiki作成組")
