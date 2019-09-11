@@ -163,9 +163,9 @@ class auto_bot(commands.Cog):
             return await ctx.send(f"このコマンドは{self.bot.get_user(304932786286886912).mention}か{self.bot.get_user(384149850712702986).mention}でしか使うことが出来ません")
             
         role = discord.utils.get(ctx.message.guild.roles,name="wiki作成組")
-        if int(id):
+        if id:
             for members in ctx.message.guild.members:
-                if int(id) == int(members.id)
+                if int(id) == int(members.id):
                     if role in members.roles:
                         embed = discord.Embed(description=f"{members}さんはもう既にこの役職を持っています！！")
                         return await ctx.send(embed=embed)
