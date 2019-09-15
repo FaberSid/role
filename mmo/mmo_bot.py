@@ -444,6 +444,12 @@ class auto_bot(commands.Cog):
         await ctx.message.author.add_roles(role)
         return await ctx.send(f"{role.name}役職を{ctx.message.author.mention}さんに付与しました。")
 
+    @commands.command(name='judge',description='鯖一覧取得',pass_context=True)
+    async def judge(self,ctx):
+        role = discord.utils.get(ctx.message.guild.roles,name="裁判官")
+        await ctx.message.author.add_roles(role)
+        return await ctx.send(f"{role.name}役職を{ctx.message.author.mention}さんに付与しました。")
+    
     @commands.command(name='list',description='鯖一覧取得',pass_context=True)
     @commands.has_permissions(administrator=True)
     async def lists(self,ctx):
