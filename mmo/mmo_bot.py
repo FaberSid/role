@@ -606,35 +606,24 @@ class auto_bot(commands.Cog):
                 pass
             try:
                 lists = re.findall(r'([0-9]+)',f"{message.embeds[0].title}")
-                if message.embeds[0].title == f"【超激レア】月島が待ち構えている...！\nLv.{lists[0]}  HP:{lists[1]}":
-                    channels = self.bot.get_channel(message.channel.id)
-                    url = f"https://discordapp.com/channels/{message.guild.id}/{message.channel.id}/{message.id}"
-                    embed = discord.Embed(description=f"""{channels.mention}で月島が出現しました！\n`[Lv.{int(lists[0])}]`の月島が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！\n\n[**この月島への直通リンク**](<{url}>)""",)
-                    embed.set_thumbnail(url="https://media.discordapp.net/attachments/526274496894730241/566274379546099745/900bd3f186c08f128b846cf2823c7403.png")
-                    embed.set_footer(text=f"出現時刻: {datetime.datetime.utcnow() + datetime.timedelta(hours=9)}")
-                    role = discord.utils.get(message.guild.roles,name="月島報告OK")
-                    if not role in message.guild.roles:
-                        await message.guild.create_role(name="月島報告OK",mentionable=True)
-                        await message.channel.send("この鯖には月島報告OKの役職がなかったから勝手に作成したよ！")
-                    for channel in message.guild.channels:
-                        if channel.name == '月島出現ログ':
-                            await channel.send(embed=embed)
-                            return await channel.send(f"{role.mention}～月島出たらしいぜ！")
-                            
-                if message.embeds[0].title == f"【超激レア】狂気ネコしろまるが待ち構えている...！\nLv.{lists[0]}  HP:{lists[1]}":
-                    channels = self.bot.get_channel(message.channel.id)
-                    url = f"https://discordapp.com/channels/{message.guild.id}/{message.channel.id}/{message.id}"
-                    embed = discord.Embed(description=f"""{channels.mention}で狂気ネコしろまるが出現しました！\n`[Lv.{int(lists[0])}]`の狂気ネコしろまるが出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！\n\n[**この狂気ネコしろまるへの直通リンク**](<{url}>)""",)
-                    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/366373818064830465/611144211336658945/image0.png")
-                    embed.set_footer(text=f"出現時刻: {datetime.datetime.utcnow() + datetime.timedelta(hours=9)}")
-                    role = discord.utils.get(message.guild.roles,name="幸せの猫遭遇報告OK")
-                    if not role in message.guild.roles:
-                        await message.guild.create_role(name="幸せの猫遭遇報告OK",mentionable=True)
-                        await message.channel.send("この鯖には幸せの猫遭遇報告OKの役職がなかったから勝手に作成したよ！")
-                    for channel in message.guild.channels:
-                        if channel.name == '幸せの猫遭遇ログ':
-                            await channel.send(embed=embed)
-                            return await channel.send(f"{role.mention}！幸せのネコが出たってよ！")
+                text  = [["属性:[月] | ランク:【超激レア】\n月島","月島","月島報告OK","月島出現ログ","～月島出たらしいぜ！"]]
+                text += [["属性:[猫] | ランク:【超激レア】\n狂気ネコしろまるが待ち構えている...！","狂気ネコしろまる","幸せの猫遭遇報告OK","幸せの猫遭遇ログ","幸せのネコが出たってよ！"]]
+                text += [["属性:[陸] | ランク:【超激レア】\nチャイナ:ドットが待ち構えている...！","チャイナ:ドット","チャイナ:ドット報告OK","チャイナ:ドットログ","チャイナ:ドットが出たってよ！"]]
+                for i in text:
+                    if message.embeds[0].title == f"{i[0]}が待ち構えている...！\nLv.{lists[0]}  HP:{lists[1]}":
+                        channels = self.bot.get_channel(message.channel.id)
+                        url = f"https://discordapp.com/channels/{message.guild.id}/{message.channel.id}/{message.id}"
+                        embed = discord.Embed(description=f"""{channels.mention}で{i[1]}が出現しました！\n`[Lv.{int(lists[0])}]`の{i[1]}が出現しました！\n敵の体力は`[HP:{int(lists[1])}]`\n\nゲットできる経験値数は`[{(int(lists[0]) * 100)}]`です！\n\n[**この{i[1]}への直通リンク**](<{url}>)""",)
+                        embed.set_thumbnail(url="https://media.discordapp.net/attachments/526274496894730241/566274379546099745/900bd3f186c08f128b846cf2823c7403.png")
+                        embed.set_footer(text=f"出現時刻: {datetime.datetime.utcnow() + datetime.timedelta(hours=9)}")
+                        role = discord.utils.get(message.guild.roles,name=f"{i[2]}")
+                        if not role in message.guild.roles:
+                            await message.guild.create_role(name=f"{i[2]}",mentionable=True)
+                            await message.channel.send(f"この鯖には{i[2]}の役職がなかったから勝手に作成したよ！")
+                        for channel in message.guild.channels:
+                            if channel.name == f"{i[3]}":
+                                await channel.send(embed=embed)
+                                return await channel.send(f"{role.mention}{i[4]}")
 
             except IndexError:
                 return
